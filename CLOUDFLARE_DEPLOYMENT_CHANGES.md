@@ -21,7 +21,7 @@ Required environment variables/secrets:
 | `DATABASE_URL` | Neon database connection string |
 | `AUTH_SECRET` | Auth.js session secret |
 | `AUTH_RESEND_KEY` | Resend API key for magic-link emails |
-| `AUTH_URL` | Final Worker/custom-domain URL |
+| `AUTH_URL` | `https://growwstacks-os.divyanshutest2.workers.dev` |
 
 Do not add Cloudflare build-token JSON as an app variable.
 

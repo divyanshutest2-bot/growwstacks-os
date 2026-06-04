@@ -15,6 +15,11 @@ import Resend from 'next-auth/providers/resend';
 
 import { sqlNoUser } from '@/lib/db';
 
+const PRODUCTION_AUTH_URL = 'https://growwstacks-os.divyanshutest2.workers.dev';
+
+process.env.AUTH_URL ??= PRODUCTION_AUTH_URL;
+process.env.NEXTAUTH_URL ??= PRODUCTION_AUTH_URL;
+
 // How often (ms) to re-validate that the user is still active. PROGRESS Auth
 // Decision: ≤60s app-layer bounce (Layer 2). Layer 1 (RLS) is immediate.
 const REVALIDATE_MS = 60 * 1000;

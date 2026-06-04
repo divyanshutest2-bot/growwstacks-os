@@ -30,7 +30,7 @@ Add these variables in the Cloudflare application settings:
 | `DATABASE_URL` | Neon connection string using the non-owner app role |
 | `AUTH_SECRET` | Generate with `openssl rand -base64 32` |
 | `AUTH_RESEND_KEY` | Resend API key for magic-link login emails |
-| `AUTH_URL` | The deployed Worker URL or custom domain |
+| `AUTH_URL` | `https://growwstacks-os.divyanshutest2.workers.dev` |
 
 Never commit real `.env` files. Use `.env.example` as the template.
 
