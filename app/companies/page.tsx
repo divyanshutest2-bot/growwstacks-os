@@ -10,7 +10,6 @@ import { listActiveUsers } from '@/lib/actions/directory';
 import type { UserOption } from '@/lib/actions/directory';
 import type { CompanyRollup } from '@/lib/types';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 type SearchParams = {

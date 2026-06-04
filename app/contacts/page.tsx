@@ -14,7 +14,6 @@ import {
 } from '@/lib/actions/directory';
 import type { ContactRollup } from '@/lib/types';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 type SearchParams = {

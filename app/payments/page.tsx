@@ -14,7 +14,6 @@ import { getCurrentUserRole } from '@/lib/auth';
 import { formatMoneyCompact, formatDate } from '@/lib/ui-payments';
 import type { PaymentRow } from '@/lib/types-payments';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 type SearchParams = {

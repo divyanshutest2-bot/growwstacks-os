@@ -14,7 +14,6 @@ import {
 import { getCurrentUserRole } from '@/lib/auth';
 import type { MilestoneListRow } from '@/lib/types-milestones';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 type SearchParams = {

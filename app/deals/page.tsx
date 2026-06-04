@@ -18,7 +18,6 @@ import { listActiveUsers, listCompanies } from '@/lib/actions/directory';
 import { isOpenStage, stageProbability, formatMoneyCompact } from '@/lib/ui-deals';
 import type { DealRollup } from '@/lib/types-deals';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 type SearchParams = {

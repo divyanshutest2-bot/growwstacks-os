@@ -71,7 +71,6 @@ import type {
   AiInsightRow,
 } from '@/lib/types';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 const SENTIMENT_ICON = {

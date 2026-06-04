@@ -14,7 +14,6 @@ import { listActiveUsers } from '@/lib/actions/directory';
 import { getCurrentUserRole } from '@/lib/auth';
 import type { TaskListRow } from '@/lib/types-tasks';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 type SearchParams = {

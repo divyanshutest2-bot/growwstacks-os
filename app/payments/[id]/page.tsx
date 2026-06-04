@@ -58,7 +58,6 @@ import type {
 } from '@/lib/types-payments';
 import type { AttachmentRow, AiInsightRow } from '@/lib/types';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 const SENTIMENT_ICON = {

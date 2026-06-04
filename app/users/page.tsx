@@ -10,7 +10,6 @@ import { listUsers } from '@/lib/actions/users';
 import { getCurrentUserRole } from '@/lib/auth';
 import type { UserRollup } from '@/lib/types-users';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 type SearchParams = {

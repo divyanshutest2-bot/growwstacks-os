@@ -6,6 +6,8 @@ node_modules/
 out/
 next-env.d.ts
 .vercel
+.open-next/
+.wrangler/
 *.tsbuildinfo
 
 # Environment & secrets — ignore ALL env files; allow ONLY the no-values template

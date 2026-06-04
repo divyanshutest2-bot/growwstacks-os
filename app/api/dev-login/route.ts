@@ -12,7 +12,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { encode } from 'next-auth/jwt';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 // Fixed seed-user UUIDs (dev seed only — not secrets). Keep in sync with 0012_seed.sql.

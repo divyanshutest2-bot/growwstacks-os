@@ -75,7 +75,6 @@ import type {
   CompanyCredentialRow,
 } from '@/lib/types';
 
-export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 // Sentiment → icon + color var for the AI Supervisor card.
