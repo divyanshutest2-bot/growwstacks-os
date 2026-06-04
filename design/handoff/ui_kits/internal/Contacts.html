@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Contacts</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .seg { display: inline-flex; background: var(--color-bg-subtle); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 2px; }
+  .seg button { font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--color-text-tertiary); background: transparent; border: 0; padding: 5px 11px; border-radius: 6px; cursor: pointer; }
+  .seg button.on { background: var(--color-bg-surface); color: var(--color-text-primary); box-shadow: var(--shadow-xs); }
+  .skel { height: 13px; border-radius: 4px; background: linear-gradient(90deg, var(--color-bg-active), var(--color-bg-subtle), var(--color-bg-active)); background-size: 200% 100%; animation: shimmer 1.3s linear infinite; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  .empty, .error { padding: 56px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .empty .ic, .error .ic { width: 52px; height: 52px; border-radius: var(--radius-lg); display: flex; align-items: center; justify-content: center; margin-bottom: 6px; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="contacts"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle" title="Collapse nav"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><span class="here">Contacts</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+
+    <div class="scroll">
+      <div class="sheet" data-screen-label="Contacts — list">
+
+        <div class="page-h">
+          <div><h1>Contacts</h1><div class="sub" id="countSub">9 people · 4 active clients</div></div>
+          <div class="spacer"></div>
+          <div class="seg" id="stateSeg">
+            <button data-state="data" class="on">Populated</button>
+            <button data-state="loading">Loading</button>
+            <button data-state="empty">Empty</button>
+            <button data-state="error">Error</button>
+          </div>
+          <button class="btn btn-primary"><i data-lucide="plus"></i>New contact</button>
+        </div>
+
+        <div class="ai-strip">
+          <span class="mk"><i data-lucide="sparkles" class="ic-fill"></i></span>
+          <p><b>1 contact has overdue tasks needing a reply</b> — Tomás Herrera last replied 8 days ago while 2 tasks sit open. <a href="Contact Detail.html">Open Tomás →</a></p>
+        </div>
+
+        <div class="filterbar" id="filterbar">
+          <div class="search-in"><i data-lucide="search" style="font-size:15px;color:var(--color-text-muted)"></i><input id="search" placeholder="Search contacts…"></div>
+          <button class="fdrop" data-f="status">Status<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="owner">Owner<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="source">Lead source<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="rating">Rating<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="projects">Active projects<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="tasks">Open tasks<i data-lucide="chevron-down"></i></button>
+        </div>
+
+        <div class="tbl-wrap" id="tblWrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg"></span></div>
+
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script>
+const STATUS_DOT = {
+  'Active Client': 'var(--iris-500)', 'Prospect': 'var(--sky-500)', 'Partner': 'var(--green-500)',
+  'On Hold': 'var(--amber-500)', 'Churned': 'var(--n-400)'
+};
+const OWN = { AR:'var(--iris-600)', PM:'var(--sky-600)', NK:'var(--green-600)', DV:'var(--amber-500)', SK:'var(--n-500)' };
+const SD = { active:'var(--color-status-active)', away:'var(--color-status-away)', left:'var(--color-status-left)' };
+const RLABEL = { great:'Great', good:'Good', average:'Average', bad:'Bad' };
+
+// id, name, company|null, status, owners[[init,state]], [sourceLabel, extraCount], projects, openTasks, ltv, lastActivity, rating
+const contacts = [
+  ['CT-101','Ravi Menon','Acme Robotics Pvt Ltd','Active Client',[['AR','active'],['PM','active']],['Upwork Direct',1],'5 · 2 active',3,'₹18.0L','2h ago','great'],
+  ['CT-102','Tomás Herrera',null,'Active Client',[['NK','active']],['Referral',0],'2 · 1 active',2,'₹6.4L','8d ago','average'],
+  ['CT-103','Priya Sundaram','Vega Logistics','Prospect',[['PM','active'],['AR','active']],['LinkedIn',1],'0 · 0 active',0,'—','1d ago','good'],
+  ['CT-104','Daniel Okoro','Brightwave Media','Partner',[['AR','active']],['Partner Network',0],'9 · 3 active',5,'₹42.8L','5h ago','great'],
+  ['CT-105','Mei Lin','Nimbus AI','Active Client',[['NK','active'],['DV','away']],['Upwork Direct',1],'3 · 1 active',1,'₹11.2L','3d ago','good'],
+  ['CT-106','Carlos Vega',null,'Prospect',[['PM','active']],['Cold Email',0],'0 · 0 active',0,'—','6d ago','good'],
+  ['CT-107','Aisha Rahman','Solara Health','On Hold',[['AR','active'],['SK','left']],['Webinar',1],'4 · 0 active',1,'₹9.6L','21d ago','average'],
+  ['CT-108','James Whitlock','Forge & Co','Churned',[['SK','left']],['Upwork Direct',0],'2 · 0 active',0,'₹3.2L','64d ago','bad'],
+  ['CT-109','Lena Voss','Helix Dynamics','Active Client',[['PM','active'],['NK','active']],['Referral',2],'6 · 2 active',4,'₹27.5L','11h ago','great'],
+];
+
+const AVBG = ['var(--iris-600)','var(--sky-600)','var(--green-600)','var(--amber-500)','var(--red-500)','var(--n-600)'];
+const wrap = document.getElementById('tblWrap');
+const HEAD = '<thead><tr><th>Contact</th><th>Status</th><th>Owners</th><th>Lead source</th><th>Projects</th><th class="num">Open tasks</th><th class="num">Lifetime value</th><th class="num">Last activity</th><th>Rating</th></tr></thead>';
+
+function avatar(init, bg){ return '<span class="avatar" style="background:' + bg + '">' + init + '</span>'; }
+
+function ostack(owners){
+  const inner = owners.map(function(o){
+    return '<span class="wrap">' + avatar(o[0], OWN[o[0]] || 'var(--n-500)') + '<span class="sdot" style="background:' + SD[o[1]] + '"></span></span>';
+  }).join('');
+  return '<div class="ostack">' + inner + '</div>';
+}
+
+function rowHtml(c){
+  const init = c[1].split(' ').map(function(w){ return w[0]; }).slice(0,2).join('');
+  const avBg = AVBG[c[0].charCodeAt(5) % 6];
+  const company = c[2]
+    ? '<div class="co">' + c[2] + '</div>'
+    : '<div class="co" style="font-style:italic;color:var(--color-text-muted)">No company · solo</div>';
+  const src = c[5][1] > 0 ? c[5][0] + ' <span style="color:var(--color-text-muted)">+' + c[5][1] + '</span>' : c[5][0];
+  const tasksCell = c[7] > 0
+    ? '<span class="status" style="border-color:transparent;background:' + (c[7] > 2 ? 'var(--color-warning-bg)' : 'var(--color-bg-subtle)') + ';color:' + (c[7] > 2 ? 'var(--color-warning-text)' : 'var(--color-text-secondary)') + '">' + c[7] + '</span>'
+    : '<span style="color:var(--color-text-muted)">0</span>';
+  const ltvColor = c[8] === '—' ? 'var(--color-text-muted)' : 'var(--color-text-primary)';
+  return '<tr data-href="Contact Detail.html">'
+    + '<td><div class="cell-name">' + avatar(init, avBg) + '<div><div class="nm">' + c[1] + '</div>' + company + '</div></div></td>'
+    + '<td><span class="status"><span class="dot" style="background:' + STATUS_DOT[c[3]] + '"></span>' + c[3] + '</span></td>'
+    + '<td>' + ostack(c[4]) + '</td>'
+    + '<td style="font-size:12px">' + src + '</td>'
+    + '<td style="font-size:12px">' + c[6] + '</td>'
+    + '<td class="num">' + tasksCell + '</td>'
+    + '<td class="num mono" style="font-weight:500;color:' + ltvColor + '">' + c[8] + '</td>'
+    + '<td class="num" style="font-size:12px;color:var(--color-text-tertiary)">' + c[9] + '</td>'
+    + '<td><span class="rating ' + c[10] + '">' + RLABEL[c[10]] + '</span></td>'
+    + '</tr>';
+}
+
+function skeletonRow(){
+  let s = '<tr><td><div class="cell-name"><span class="skel" style="width:28px;height:28px;border-radius:50%"></span><div><div class="skel" style="width:120px;margin-bottom:5px"></div><div class="skel" style="width:80px;height:10px"></div></div></div></td>';
+  const w = [80,60,90,60,24,54,50,54];
+  for (let i = 0; i < w.length; i++) s += '<td><div class="skel" style="width:' + w[i] + 'px"></div></td>';
+  return s + '</tr>';
+}
+
+function setState(state){
+  if (state === 'loading') {
+    let rows = '';
+    for (let i = 0; i < 7; i++) rows += skeletonRow();
+    wrap.innerHTML = '<table class="tbl">' + HEAD + '<tbody>' + rows + '</tbody></table>';
+  } else if (state === 'empty') {
+    wrap.innerHTML = '<div class="empty"><span class="ic" style="background:var(--color-accent-subtle)"><i data-lucide="contact" style="font-size:26px;color:var(--color-accent)"></i></span>'
+      + '<div style="font-weight:600;font-size:15px">No contacts match these filters</div>'
+      + '<div style="font-size:13px;color:var(--color-text-tertiary);max-width:340px">Try clearing a filter, or add the first person in this segment.</div>'
+      + '<button class="btn btn-secondary btn-sm" id="clearBtn" style="margin-top:10px"><i data-lucide="x"></i>Clear filters</button></div>';
+  } else if (state === 'error') {
+    wrap.innerHTML = '<div class="error"><span class="ic" style="background:var(--color-danger-bg)"><i data-lucide="cloud-off" style="font-size:26px;color:var(--color-danger-fg)"></i></span>'
+      + '<div style="font-weight:600;font-size:15px">Couldn’t load contacts</div>'
+      + '<div style="font-size:13px;color:var(--color-text-tertiary);max-width:340px">The sync service didn’t respond. Your data is safe — this is just the view.</div>'
+      + '<button class="btn btn-primary btn-sm" id="retryBtn" style="margin-top:10px"><i data-lucide="rotate-cw"></i>Retry</button></div>';
+  } else {
+    applySearch();
+  }
+  if (window.lucide) lucide.createIcons();
+}
+
+function applySearch(){
+  const q = (document.getElementById('search').value || '').toLowerCase().trim();
+  const rows = contacts.filter(function(c){
+    return !q || c[1].toLowerCase().indexOf(q) > -1 || (c[2] || '').toLowerCase().indexOf(q) > -1;
+  });
+  if (rows.length === 0) { setState('empty'); return; }
+  wrap.innerHTML = '<table class="tbl">' + HEAD + '<tbody>' + rows.map(rowHtml).join('') + '</tbody></table>';
+  if (window.lucide) lucide.createIcons();
+}
+
+function activeState(){ return document.querySelector('#stateSeg .on').dataset.state; }
+function gotoState(name){
+  const btn = document.querySelector('#stateSeg [data-state="' + name + '"]');
+  document.querySelectorAll('#stateSeg button').forEach(function(x){ x.classList.remove('on'); });
+  btn.classList.add('on');
+  setState(name);
+}
+
+document.getElementById('stateSeg').addEventListener('click', function(e){
+  const b = e.target.closest('button'); if (!b) return;
+  gotoState(b.dataset.state);
+});
+document.getElementById('search').addEventListener('input', function(){ if (activeState() === 'data') applySearch(); });
+document.getElementById('filterbar').addEventListener('click', function(e){ const b = e.target.closest('.fdrop'); if (b) b.classList.toggle('on'); });
+document.getElementById('navToggle').onclick = function(){ document.getElementById('app').classList.toggle('collapsed'); };
+
+wrap.addEventListener('click', function(e){
+  const tr = e.target.closest('tr[data-href]');
+  if (tr) { location.href = tr.dataset.href; return; }
+  if (e.target.closest('#clearBtn')) { document.getElementById('search').value = ''; gotoState('data'); }
+  if (e.target.closest('#retryBtn')) { gotoState('loading'); setTimeout(function(){ gotoState('data'); }, 700); }
+});
+
+if (window.lucide) lucide.createIcons();
+setState('loading');
+setTimeout(function(){ gotoState('data'); }, 650);
+</script>
+</body>
+</html>

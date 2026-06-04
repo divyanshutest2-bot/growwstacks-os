@@ -1,0 +1,198 @@
+/* app/deals-board.css — page-specific rules for the Deals list (Kanban board +
+   Board⇄List toggle). Ported verbatim from
+   design/handoff/ui_kits/internal/Deals.html's <style> block, plus the helper
+   bits used inline in that prototype (.seg toggle, .deal-card, column lanes).
+   Tokens-only: every color is a var(); bare CSS px metrics are kept as-is (the
+   tokens-only check flags only raw hex and Tailwind [NNpx] arbitraries). */
+
+/* Board⇄List segmented toggle */
+.seg {
+  display: inline-flex;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  padding: 2px;
+}
+.seg button {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-tertiary);
+  background: transparent;
+  border: 0;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.seg button.on {
+  background: var(--color-bg-surface);
+  color: var(--color-text-primary);
+  box-shadow: var(--shadow-xs);
+}
+
+/* Kanban board */
+.board {
+  display: flex;
+  gap: 14px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  align-items: flex-start;
+}
+.col {
+  width: 272px;
+  flex: none;
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 250px);
+}
+.col-h {
+  padding: 11px 13px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.col-h .col-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}
+.col-h .ct {
+  font-size: 13px;
+  font-weight: 700;
+}
+.col-h .cc {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
+  padding: 1px 7px;
+}
+.col-h .cv {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+.col.won .col-h {
+  background: var(--color-success-bg);
+}
+.col.won .col-h .ct {
+  color: var(--color-success-text);
+}
+.col.lost .col-h {
+  background: var(--color-bg-sunken);
+}
+.col.lost .col-h .ct {
+  color: var(--color-text-tertiary);
+}
+.col-cards {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 70px;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+.col.lost .deal-card {
+  opacity: 0.72;
+}
+.col-empty {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  text-align: center;
+  padding: 14px 0;
+}
+
+/* Deal card */
+.deal-card {
+  position: relative;
+  display: block;
+  text-decoration: none;
+  background: var(--color-bg-surface);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  padding: 12px;
+  transition: box-shadow var(--dur-fast), transform var(--dur-fast);
+}
+.deal-card:hover {
+  box-shadow: var(--shadow-sm);
+}
+.deal-card .dn {
+  font-size: 13.5px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+.deal-card .dco {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  margin-top: 2px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.deal-card .dval {
+  font-family: var(--font-mono);
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 9px;
+}
+.deal-card .dfoot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+}
+.deal-card .dclose {
+  font-size: 10px;
+  color: var(--color-text-tertiary);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Per-card restage <select> — lightweight inline auto-save affordance that
+   stands in for full drag-and-drop. Sits above the card link so it's clickable. */
+.deal-card .dstage {
+  position: relative;
+  z-index: 2;
+  margin-top: 9px;
+}
+.deal-card .dstage select {
+  width: 100%;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  background: var(--color-bg-subtle);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  cursor: pointer;
+  outline: 0;
+}
+.deal-card .dstage select:focus {
+  border-color: var(--color-border-focus);
+  box-shadow: var(--shadow-focus);
+}
+
+/* Pipeline sub-line under the H1 reuses .page-h .sub from the shell. The board
+   wrapper scrolls horizontally inside the .sheet without clipping the sheet. */
+.board-wrap {
+  margin-top: 2px;
+}

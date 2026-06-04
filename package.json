@@ -1,0 +1,38 @@
+{
+  "name": "gs-operating-system",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "pages:build": "npx @cloudflare/next-on-pages",
+    "test:e2e": "playwright test",
+    "test:e2e:contacts": "playwright test smoke/contacts.spec.ts",
+    "test:tokens": "bash scripts/check-tokens-only.sh"
+  },
+  "dependencies": {
+    "@neondatabase/serverless": "^0.10.4",
+    "lucide-react": "^1.17.0",
+    "next": "^15.1.6",
+    "next-auth": "5.0.0-beta.25",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@cloudflare/next-on-pages": "^1.13.7",
+    "@playwright/test": "^1.60.0",
+    "@types/node": "^22.10.7",
+    "@types/react": "^19.0.7",
+    "@types/react-dom": "^19.0.3",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "^15.1.6",
+    "postcss": "^8.5.1",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
+  }
+}

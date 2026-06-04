@@ -1,0 +1,32 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+next-env.d.ts
+.vercel
+*.tsbuildinfo
+
+# Environment & secrets — ignore ALL env files; allow ONLY the no-values template
+.env*
+!.env.example
+.dev.vars
+
+# Keys / certificates — never commit
+*.pem
+*.key
+*.p12
+
+# OS cruft
+.DS_Store
+
+# Claude Code local settings (machine-specific permissions; not secrets)
+.claude/settings.local.json
+
+# Playwright
+/playwright/.auth/
+/playwright/.cache/
+/playwright/screenshots/
+/playwright-report/
+/test-results/

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Acme Robotics — Project</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  /* ---- Client portal: calmer, more spacious than the internal app ---- */
+  .portal .scroll { padding: 40px 40px 80px; }
+  .pwrap { max-width: 880px; margin: 0 auto; }
+  .portal .topbar { background: var(--color-bg-surface); }
+  .portal-pill { font-size: 11px; font-weight: 600; letter-spacing: .03em; color: var(--color-text-tertiary); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-full); padding: 4px 11px; }
+
+  .phero { background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); padding: 28px 32px; margin-bottom: 24px; }
+  .phero h1 { font-family: var(--font-display); font-size: 34px; font-weight: 700; letter-spacing: -.02em; }
+  .phero .pmeta { font-size: 14px; color: var(--color-text-tertiary); margin-top: 8px; }
+  .phero-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .phero-pct { margin-left: auto; text-align: right; }
+  .phero-pct .v { font-family: var(--font-display); font-size: 48px; font-weight: 800; color: var(--color-accent-text); line-height: 1; }
+  .phero-pct .k { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-tertiary); }
+  .pbar { height: 10px; border-radius: var(--radius-full); background: var(--color-bg-active); overflow: hidden; margin-top: 18px; }
+  .pbar > div { height: 100%; background: var(--color-accent); border-radius: var(--radius-full); }
+
+  .section-title { font-family: var(--font-display); font-size: 19px; font-weight: 700; letter-spacing: -.01em; margin: 32px 0 6px; }
+  .section-sub { font-size: 13.5px; color: var(--color-text-tertiary); line-height: 1.55; margin-bottom: 16px; max-width: 64ch; }
+
+  .pcard { background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-xl); box-shadow: var(--shadow-sm); padding: 24px; }
+
+  /* where the time went */
+  .attrbar { display: flex; height: 16px; border-radius: var(--radius-full); overflow: hidden; gap: 2px; margin-bottom: 16px; }
+  .attrbar > div { height: 100%; }
+  .attr-legend { display: flex; gap: 22px; flex-wrap: wrap; }
+  .attr-legend .it { display: flex; align-items: center; gap: 8px; font-size: 13px; white-space: nowrap; }
+  .attr-legend .sw { width: 12px; height: 12px; border-radius: 3px; }
+  .attr-legend b { font-family: var(--font-mono); }
+
+  /* vertical timeline */
+  .tl { position: relative; margin-top: 6px; }
+  .tl-item { position: relative; padding-left: 40px; padding-bottom: 22px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item::before { content: ''; position: absolute; left: 10px; top: 6px; bottom: -4px; width: 2.5px; background: var(--seg, var(--color-border-default)); border-radius: 2px; }
+  .tl-item.dashed::before { background: repeating-linear-gradient(var(--seg) 0 5px, transparent 5px 10px); }
+  .tl-item:last-child::before { display: none; }
+  .tl-node { position: absolute; left: 0; top: 2px; width: 22px; height: 22px; border-radius: 50%; background: var(--color-bg-app); border: 2.5px solid var(--seg, var(--color-border-strong)); display: flex; align-items: center; justify-content: center; z-index: 1; }
+  .tl-node i { font-size: 12px; color: var(--seg, var(--color-text-tertiary)); }
+  .tl-node.solid { background: var(--seg); }
+  .tl-node.solid i { color: #fff; }
+  .tl-when { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-tertiary); }
+  .tl-event-title { font-size: 14px; font-weight: 600; margin-top: 1px; }
+
+  .tl-period { background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-left: 4px solid var(--seg); border-radius: var(--radius-md); box-shadow: var(--shadow-xs); padding: 12px 16px; margin-top: 2px; }
+  .tl-period .top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .tl-period .dur { font-family: var(--font-display); font-size: 22px; font-weight: 700; color: var(--color-text-primary); line-height: 1; white-space: nowrap; }
+  .tl-chip { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: var(--radius-full); white-space: nowrap; }
+  .tl-period .desc { font-size: 13px; color: var(--color-text-secondary); line-height: 1.5; margin-top: 8px; }
+  .tl-period .range { font-family: var(--font-mono); font-size: 11px; color: var(--color-text-muted); margin-left: auto; }
+
+  .ms-card { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-top: 1px solid var(--color-border-subtle); }
+  .ms-card:first-child { border-top: 0; }
+  .ms-bar { flex: 1; max-width: 220px; height: 7px; border-radius: var(--radius-full); background: var(--color-bg-active); overflow: hidden; }
+  .ms-bar > div { height: 100%; background: var(--color-accent); border-radius: var(--radius-full); }
+
+  .deliv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .deliv { display: flex; align-items: center; gap: 13px; padding: 16px; border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); background: var(--color-bg-surface); box-shadow: var(--shadow-xs); cursor: pointer; transition: border-color var(--dur-fast), box-shadow var(--dur-fast); text-decoration: none; }
+  .deliv:hover { border-color: var(--color-accent-border); box-shadow: var(--shadow-sm); text-decoration: none; }
+  .deliv .dic { width: 42px; height: 42px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex: none; }
+  .deliv .dt { font-size: 14px; font-weight: 600; color: var(--color-text-primary); }
+  .deliv .ds { font-size: 12px; color: var(--color-text-tertiary); }
+</style>
+</head>
+<body>
+<div class="app portal" id="app">
+  <aside id="sidebar" data-active="timeline" data-role="client" data-user="Ravi Menon" data-user-role="Acme Robotics" data-user-init="RM" data-user-color="var(--iris-600)"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle" title="Collapse nav"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><span>Projects</span><i data-lucide="chevron-right"></i><span class="here">Lead-routing automation</span></nav>
+      <div class="spacer"></div>
+      <span class="portal-pill">Client portal</span>
+      <button class="btn btn-ghost btn-sm"><i data-lucide="life-buoy"></i>Get help</button>
+    </div>
+
+    <div class="scroll">
+      <div class="pwrap" data-screen-label="Client portal — Project timeline">
+
+        <!-- HERO -->
+        <div class="phero">
+          <div class="phero-row">
+            <div>
+              <h1>Lead-routing automation</h1>
+              <div class="pmeta">Started 1 May 2026 · estimated completion 14 Jun 2026</div>
+            </div>
+            <div class="phero-pct"><div class="v">64%</div><div class="k">Complete</div></div>
+          </div>
+          <div class="phero-row" style="margin-top:16px;gap:10px">
+            <span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span>
+            <span class="schedule" style="background:var(--color-success-bg);color:var(--color-success-text);border:1px solid var(--color-success-border)"><i data-lucide="circle-check" style="font-size:13px"></i>On track</span>
+            <span style="font-size:13px;color:var(--color-text-tertiary)">3 of 7 milestones delivered</span>
+          </div>
+          <div class="pbar"><div style="width:64%"></div></div>
+        </div>
+
+        <!-- WHERE THE TIME WENT -->
+        <div class="section-title">Where the time has gone</div>
+        <div class="section-sub">The original estimate was about 30 working days. 43 calendar days have passed so far — here is an honest breakdown of where that time went, in both directions. This is a shared record, kept up to date automatically.</div>
+        <div class="pcard">
+          <div class="attrbar">
+            <div style="width:51%;background:var(--color-tl-ourwork)"></div>
+            <div style="width:35%;background:var(--color-tl-waiting)"></div>
+            <div style="width:14%;background:var(--color-info-solid)"></div>
+          </div>
+          <div class="attr-legend">
+            <span class="it"><span class="sw" style="background:var(--color-tl-ourwork)"></span>Our build time · <b>22 days</b></span>
+            <span class="it"><span class="sw" style="background:var(--color-tl-waiting)"></span>Awaiting your input · <b>15 days</b></span>
+            <span class="it"><span class="sw" style="background:var(--color-info-solid)"></span>External dependency · <b>6 days</b></span>
+          </div>
+        </div>
+
+        <!-- TIMELINE -->
+        <div class="section-title">Project timeline</div>
+        <div class="section-sub">Every step, in order — what happened, when, how long it took, and which side it was waiting on.</div>
+        <div class="pcard"><div class="tl" id="tl"></div></div>
+
+        <!-- MILESTONES -->
+        <div class="section-title">Milestones</div>
+        <div class="pcard" id="msCard"></div>
+
+        <!-- DELIVERABLES -->
+        <div class="section-title">Deliverables</div>
+        <div class="section-sub">Everything we've shared with you so far — open any of these any time.</div>
+        <div class="deliv-grid" id="delivGrid"></div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script>
+const ATTR = {
+  us:       { color: 'var(--color-tl-ourwork)', label: 'Our work', chipBg: 'var(--color-accent-subtle)', chipFg: 'var(--color-accent-text)' },
+  client:   { color: 'var(--color-tl-waiting)', label: 'Awaiting your input', chipBg: 'var(--color-warning-bg)', chipFg: 'var(--color-warning-text)' },
+  external: { color: 'var(--color-info-solid)', label: 'External dependency', chipBg: 'var(--color-info-bg)', chipFg: 'var(--color-info-text)' },
+};
+
+// type: 'event' | 'period'
+const timeline = [
+  { type:'event', when:'1 May 2026', title:'Contract signed', icon:'file-signature', seg:'var(--color-tl-waiting)', solid:false, nodeColor:'var(--n-400)' },
+  { type:'period', attr:'client', dur:'4 days', range:'1–5 May', desc:'Project can’t begin until the HubSpot and Slack access credentials are shared. Requested on day one.' },
+  { type:'event', when:'5 May 2026', title:'Credentials received', icon:'key-round', solid:true, nodeColor:'var(--color-success-solid)', seg:'var(--color-tl-ourwork)' },
+  { type:'event', when:'6 May 2026', title:'Kickoff call · 32 min', icon:'phone', solid:false, nodeColor:'var(--color-info-solid)', seg:'var(--color-tl-ourwork)' },
+  { type:'period', attr:'us', dur:'12 days', range:'6–18 May', desc:'Discovery, HubSpot integration and the routing-rules engine built and shipped. Milestone 2 delivered 2 days early.' },
+  { type:'event', when:'18 May 2026', title:'Milestone 2 delivered', icon:'check', solid:true, nodeColor:'var(--color-success-solid)', seg:'var(--color-tl-waiting)' },
+  { type:'period', attr:'client', dur:'11 days', range:'18–29 May', desc:'Awaiting your confirmation of the milestone 4 scope before notification work could start.' },
+  { type:'event', when:'29 May 2026', title:'You confirmed the scope', icon:'message-circle', solid:false, nodeColor:'var(--color-tl-waiting)', seg:'var(--color-info-solid)' },
+  { type:'period', attr:'external', dur:'6 days', range:'29 May–4 Jun', desc:'Waiting on a production HubSpot token from a third-party system. Slack-side work continued in parallel.' },
+  { type:'period', attr:'us', dur:'10 days', range:'4–14 Jun', desc:'Building the Slack notifications milestone — currently in progress, on track for the estimated date.' },
+  { type:'event', when:'14 Jun 2026', title:'Estimated delivery', icon:'flag', solid:false, nodeColor:'var(--color-accent)', seg:'var(--color-accent)', dashed:true, upcoming:true },
+];
+
+function renderTimeline(){
+  const html = timeline.map(function(e){
+    if (e.type === 'event') {
+      const cls = (e.dashed ? ' dashed' : '');
+      const node = '<span class="tl-node ' + (e.solid ? 'solid' : '') + '" style="--seg:' + (e.nodeColor) + '"><i data-lucide="' + e.icon + '"></i></span>';
+      const title = '<div class="tl-event-title"' + (e.upcoming ? ' style="color:var(--color-accent-text)"' : '') + '>' + e.title + (e.upcoming ? ' <span style="font-weight:500;color:var(--color-text-muted);font-size:12px">· upcoming</span>' : '') + '</div>';
+      return '<div class="tl-item' + cls + '" style="--seg:' + e.seg + '">' + node + '<div class="tl-when">' + e.when + '</div>' + title + '</div>';
+    }
+    const a = ATTR[e.attr];
+    const node = '<span class="tl-node" style="--seg:' + a.color + '"></span>';
+    const card = '<div class="tl-period" style="--seg:' + a.color + '">'
+      + '<div class="top"><span class="dur">' + e.dur + '</span>'
+      + '<span class="tl-chip" style="background:' + a.chipBg + ';color:' + a.chipFg + '"><span style="width:7px;height:7px;border-radius:50%;background:' + a.color + '"></span>' + a.label + '</span>'
+      + '<span class="range">' + e.range + '</span></div>'
+      + '<div class="desc">' + e.desc + '</div></div>';
+    return '<div class="tl-item" style="--seg:' + a.color + '">' + node + card + '</div>';
+  }).join('');
+  document.getElementById('tl').innerHTML = html;
+}
+
+const milestones = [
+  ['Discovery & scope','done',100],['HubSpot integration','done',100],['Routing rules engine','done',100],
+  ['Slack notifications','wip',55],['QA & edge cases','todo',0],['Internal UAT','todo',0],['Go-live','todo',0]
+];
+function msStatus(k){ return k==='done'?'<span class="schedule" style="background:var(--color-success-bg);color:var(--color-success-text);border:1px solid var(--color-success-border)">Delivered</span>':k==='wip'?'<span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span>':'<span class="status">Upcoming</span>'; }
+document.getElementById('msCard').innerHTML = milestones.map(function(m,i){
+  return '<div class="ms-card"><span style="width:26px;height:26px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:12px;font-weight:600;background:' + (m[1]==='done'?'var(--color-success-bg);color:var(--color-success-text)':m[1]==='wip'?'var(--color-accent-subtle);color:var(--color-accent-text)':'var(--color-bg-subtle);color:var(--color-text-tertiary)') + '">' + (i+1) + '</span>'
+    + '<div style="flex:1;min-width:0"><div style="font-size:14px;font-weight:600">' + m[0] + '</div></div>'
+    + '<div class="ms-bar"><div style="width:' + m[2] + '%"></div></div><span class="mono" style="font-size:11px;color:var(--color-text-tertiary);width:34px;text-align:right">' + m[2] + '%</span>'
+    + msStatus(m[1]) + '</div>';
+}).join('');
+
+const deliverables = [
+  ['Product walkthrough','Loom · 8 min','video','var(--color-danger-bg)','var(--color-danger-fg)'],
+  ['Staging environment','acme-staging.app','external-link','var(--color-accent-subtle)','var(--color-accent)'],
+  ['Routing rules — how it works','PDF · 6 pages','file-text','var(--color-info-bg)','var(--color-info-solid)'],
+  ['Milestone 2 demo','Loom · 4 min','video','var(--color-danger-bg)','var(--color-danger-fg)'],
+];
+document.getElementById('delivGrid').innerHTML = deliverables.map(function(d){
+  return '<a class="deliv" href="#"><span class="dic" style="background:' + d[3] + '"><i data-lucide="' + d[2] + '" style="color:' + d[4] + '"></i></span><div style="flex:1"><div class="dt">' + d[0] + '</div><div class="ds">' + d[1] + '</div></div><i data-lucide="arrow-up-right" style="color:var(--color-text-muted)"></i></a>';
+}).join('');
+
+renderTimeline();
+if (window.lucide) lucide.createIcons();
+document.getElementById('navToggle').onclick = function(){ document.getElementById('app').classList.toggle('collapsed'); };
+</script>
+</body>
+</html>

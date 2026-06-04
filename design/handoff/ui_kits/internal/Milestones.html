@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Milestones</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .seg { display:inline-flex; background:var(--color-bg-subtle); border:1px solid var(--color-border-subtle); border-radius:var(--radius-md); padding:2px; }
+  .seg button { font-family:var(--font-sans); font-size:12px; font-weight:600; color:var(--color-text-tertiary); background:transparent; border:0; padding:5px 11px; border-radius:6px; cursor:pointer; }
+  .seg button.on { background:var(--color-bg-surface); color:var(--color-text-primary); box-shadow:var(--shadow-xs); }
+  .skel { height:13px; border-radius:4px; background:linear-gradient(90deg,var(--color-bg-active),var(--color-bg-subtle),var(--color-bg-active)); background-size:200% 100%; animation:shimmer 1.3s linear infinite; }
+  @keyframes shimmer { to { background-position:-200% 0; } }
+  .msq { width:28px; height:28px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:11px; font-weight:600; flex:none; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="milestones"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle" title="Collapse nav"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><span class="here">Milestones</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+    <div class="scroll">
+      <div class="sheet" style="max-width:1300px" data-screen-label="Milestones — list">
+        <div class="page-h">
+          <div><h1>Milestones</h1><div class="sub">18 milestones across 12 projects</div></div>
+          <div class="spacer"></div>
+          <div class="seg" id="stateSeg"><button data-state="data" class="on">Populated</button><button data-state="loading">Loading</button><button data-state="empty">Empty</button></div>
+          <button class="btn btn-primary"><i data-lucide="plus"></i>New milestone</button>
+        </div>
+        <div class="ai-strip"><span class="mk"><i data-lucide="sparkles" class="ic-fill"></i></span><p><b>3 milestones are overdue across 3 projects</b> — all waiting on client input, not our work. Worth a consolidated nudge. <a href="Milestone Detail.html">Open M4 · Acme →</a></p></div>
+        <div class="filterbar" id="filterbar">
+          <div class="search-in"><i data-lucide="search" style="font-size:15px;color:var(--color-text-muted)"></i><input id="search" placeholder="Search milestones…"></div>
+          <button class="fdrop" data-f="project">Project<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="status">Status<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="schedule">Schedule<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="owner">Owner<i data-lucide="chevron-down"></i></button>
+        </div>
+        <div class="tbl-wrap" id="tblWrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="list-kit.js"></script>
+<script>
+var ST = { done:['Done','var(--green-500)'], wip:['In Progress','var(--iris-500)'], review:['In Review','var(--sky-500)'], todo:['Not started','var(--n-400)'], hold:['On Hold','var(--amber-500)'] };
+var rows = [
+  {id:'MS-101', m:'M3', name:'Routing rules engine', project:'Lead-routing automation', st:'done', comp:100, target:'2026-05-28', sched:['Delivered','info'], value:300000, tasks:'5 · 5', own:[['NK','active']]},
+  {id:'MS-102', m:'M4', name:'Slack notifications', project:'Lead-routing automation', st:'wip', comp:55, target:'2026-06-06', sched:['Due 3d','warning'], value:350000, tasks:'4 · 2', own:[['NK','active'],['DV','away']]},
+  {id:'MS-103', m:'M2', name:'Onboarding flows', project:'Onboarding chatbot', st:'review', comp:90, target:'2026-06-04', sched:['Due 1d','warning'], value:280000, tasks:'6 · 5', own:[['DV','away']]},
+  {id:'MS-104', m:'M1', name:'Content ingestion', project:'Content pipeline', st:'wip', comp:40, target:'2026-06-12', sched:['On track','success'], value:420000, tasks:'8 · 3', own:[['AR','active']]},
+  {id:'MS-105', m:'M5', name:'QA & edge cases', project:'Lead-routing automation', st:'todo', comp:0, target:'2026-06-10', sched:['On track','success'], value:200000, tasks:'4 · 0', own:[['NK','active']]},
+  {id:'MS-106', m:'M2', name:'Reporting dashboard', project:'Logistics automation', st:'hold', comp:25, target:'2026-05-22', sched:['Overdue 5d','danger'], value:520000, tasks:'5 · 1', own:[['PM','active'],['SK','left']]},
+  {id:'MS-107', m:'M1', name:'Data model & sync', project:'Support copilot', st:'done', comp:100, target:'2026-05-15', sched:['Delivered','info'], value:240000, tasks:'3 · 3', own:[['NK','active']]},
+  {id:'MS-108', m:'M3', name:'Slack ops integration', project:'Slack ops bot', st:'wip', comp:60, target:'2026-06-08', sched:['On track','success'], value:310000, tasks:'5 · 3', own:[['AR','active']]},
+];
+initList({
+  containerId:'tblWrap', navHref:'Milestone Detail.html',
+  emptyIcon:'flag', emptyTitle:'No milestones match these filters', emptyText:'Try clearing a filter, or add a milestone to a project.',
+  search:function(r,q){ return r.name.toLowerCase().indexOf(q)>-1 || r.project.toLowerCase().indexOf(q)>-1; },
+  columns:[
+    {label:'Milestone', render:function(r){ var tone = r.st==='done'?['var(--color-success-bg)','var(--color-success-text)']:r.st==='wip'?['var(--color-accent-subtle)','var(--color-accent-text)']:['var(--color-bg-subtle)','var(--color-text-tertiary)']; return '<div class="cell-name"><span class="msq" style="background:'+tone[0]+';color:'+tone[1]+'">'+r.m+'</span><div><div class="nm">'+r.name+'</div><div class="co">'+r.project+'</div></div></div>'; }},
+    {label:'Status', render:function(r){ return LK.status(ST[r.st][0], ST[r.st][1]); }},
+    {label:'Completion', render:function(r){ return LK.bar(r.comp); }},
+    {label:'Schedule', render:function(r){ return LK.sched(r.sched[0], r.sched[1]); }},
+    {label:'Target', num:true, render:function(r){ return LK.mono(r.target); }},
+    {label:'Value', num:true, render:function(r){ return LK.money(r.value); }},
+    {label:'Tasks', num:true, render:function(r){ return LK.muted(r.tasks+' done'); }},
+    {label:'Owners', render:function(r){ return LK.ostack(r.own); }}
+  ],
+  rows:rows
+});
+</script>
+</body>
+</html>

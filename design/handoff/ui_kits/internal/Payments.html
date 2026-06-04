@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Payments</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .seg { display:inline-flex; background:var(--color-bg-subtle); border:1px solid var(--color-border-subtle); border-radius:var(--radius-md); padding:2px; }
+  .seg button { font-family:var(--font-sans); font-size:12px; font-weight:600; color:var(--color-text-tertiary); background:transparent; border:0; padding:5px 11px; border-radius:6px; cursor:pointer; }
+  .seg button.on { background:var(--color-bg-surface); color:var(--color-text-primary); box-shadow:var(--shadow-xs); }
+  .skel { height:13px; border-radius:4px; background:linear-gradient(90deg,var(--color-bg-active),var(--color-bg-subtle),var(--color-bg-active)); background-size:200% 100%; animation:shimmer 1.3s linear infinite; }
+  @keyframes shimmer { to { background-position:-200% 0; } }
+  .sumcards { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+  .sumcard { display:flex; align-items:center; gap:14px; background:var(--color-bg-surface); border:1px solid var(--color-border-subtle); border-radius:var(--radius-lg); box-shadow:var(--shadow-sm); padding:16px 20px; }
+  .sumcard .ic { width:42px; height:42px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; flex:none; }
+  .sumcard .k { font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--color-text-tertiary); }
+  .sumcard .v { font-family:var(--font-mono); font-size:26px; font-weight:600; line-height:1.1; }
+  .against { display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:10px; font-weight:500; padding:2px 7px; border-radius:var(--radius-sm); background:var(--color-bg-subtle); color:var(--color-text-secondary); border:1px solid var(--color-border-subtle); white-space:nowrap; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="payments"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><span class="here">Payments</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+    <div class="scroll">
+      <div class="sheet" style="max-width:1280px" data-screen-label="Payments — list">
+        <div class="page-h">
+          <div><h1>Payments</h1><div class="sub">across 12 projects · INR</div></div>
+          <div class="spacer"></div>
+          <div class="seg" id="stateSeg"><button data-state="data" class="on">Populated</button><button data-state="loading">Loading</button><button data-state="empty">Empty</button></div>
+          <button class="btn btn-primary"><i data-lucide="plus"></i>Record payment</button>
+        </div>
+
+        <div class="sumcards">
+          <div class="sumcard"><span class="ic" style="background:var(--color-success-bg)"><i data-lucide="trending-up" style="color:var(--color-success-solid)"></i></span><div><div class="k">Received</div><div class="v" style="color:var(--color-success-text)">₹48.6L</div></div><div style="margin-left:auto;font-size:11px;color:var(--color-text-tertiary);text-align:right">confirmed +<br>in accounts</div></div>
+          <div class="sumcard"><span class="ic" style="background:var(--color-warning-bg)"><i data-lucide="clock" style="color:var(--color-warning-solid)"></i></span><div><div class="k">Outstanding</div><div class="v" style="color:var(--color-warning-text)">₹23.8L</div></div><div style="margin-left:auto;font-size:11px;color:var(--color-text-tertiary);text-align:right">due +<br><span style="color:var(--color-danger-text)">1 overdue</span></div></div>
+        </div>
+
+        <div class="ai-strip"><span class="mk"><i data-lucide="sparkles" class="ic-fill"></i></span><p><b>PMT-0007 is 9 days overdue</b> — Acme usually pays on time. A gentle chase keeps cash flow healthy. <a href="Payment Detail.html">Open PMT-0007 →</a></p></div>
+
+        <div class="filterbar" id="filterbar">
+          <div class="search-in"><i data-lucide="search" style="font-size:15px;color:var(--color-text-muted)"></i><input id="search" placeholder="Search payments…"></div>
+          <button class="fdrop" data-f="status">Status<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="project">Project<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="date">Date range<i data-lucide="chevron-down"></i></button>
+        </div>
+        <div class="tbl-wrap" id="tblWrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="list-kit.js"></script>
+<script>
+// lifecycle: draft / sent / paid / unpaid(overdue) / failed / refunded
+var ST = {
+  paid:['Paid','success'], sent:['Sent','info'], draft:['Draft','n'], overdue:['Overdue','danger'], failed:['Failed','danger'], refunded:['Refunded','n']
+};
+function statusBadge(k){
+  if (k==='draft' || k==='refunded') return '<span class="status">'+(k==='draft'?'Draft':'Refunded')+'</span>';
+  var s=ST[k]; return '<span class="schedule" style="background:var(--color-'+s[1]+'-bg);color:var(--color-'+s[1]+'-text);border:1px solid var(--color-'+s[1]+'-border)">'+s[0]+'</span>';
+}
+var rows = [
+  {id:'PMT-0011', forText:'Onboarding chatbot · M2', against:['PROJECT','Onboarding chatbot'], amt:280000, st:'paid', due:'2026-05-20', paid:'2026-05-19', method:'Bank transfer'},
+  {id:'PMT-0010', forText:'Annual retainer · Q2', against:['DEAL','Annual retainer'], amt:450000, st:'sent', due:'2026-06-10', paid:'—', method:'Bank transfer'},
+  {id:'PMT-0009', forText:'Content pipeline · M1', against:['MILESTONE','Content ingestion'], amt:420000, st:'sent', due:'2026-06-14', paid:'—', method:'UPI'},
+  {id:'PMT-0008', forText:'Support copilot · final', against:['PROJECT','Support copilot'], amt:240000, st:'paid', due:'2026-05-15', paid:'2026-05-14', method:'Bank transfer'},
+  {id:'PMT-0007', forText:'Lead-routing · M2', against:['MILESTONE','HubSpot integration'], amt:350000, st:'overdue', due:'2026-05-24', paid:'—', method:'Bank transfer'},
+  {id:'PMT-0006', forText:'Logistics automation · M1', against:['PROJECT','Logistics automation'], amt:520000, st:'draft', due:'2026-06-20', paid:'—', method:'—'},
+  {id:'PMT-0005', forText:'Slack ops bot · deposit', against:['DEAL','Slack ops bot'], amt:180000, st:'refunded', due:'2026-04-30', paid:'2026-05-02', method:'UPI'},
+];
+function againstTag(a){ var ic=a[0]==='PROJECT'?'kanban':a[0]==='MILESTONE'?'flag':'handshake'; return '<span class="against"><i data-lucide="'+ic+'" style="font-size:11px"></i>'+a[1]+'</span>'; }
+initList({
+  containerId:'tblWrap', navHref:'Payment Detail.html',
+  emptyIcon:'receipt', emptyTitle:'No payments match these filters', emptyText:'Try clearing a filter, or record a payment against a deal.',
+  search:function(r,q){ return r.id.toLowerCase().indexOf(q)>-1 || r.forText.toLowerCase().indexOf(q)>-1; },
+  columns:[
+    {label:'Payment', render:function(r){ return '<div class="cell-name"><span class="logo" style="width:30px;height:30px;border-radius:8px;background:var(--color-bg-subtle);color:var(--color-text-tertiary);display:flex;align-items:center;justify-content:center;flex:none"><i data-lucide="receipt" style="font-size:15px"></i></span><div><div class="nm mono" style="font-size:12px">'+r.id+'</div><div class="co">'+r.forText+'</div></div></div>'; }},
+    {label:'Against', render:function(r){ return againstTag(r.against); }},
+    {label:'Amount', num:true, render:function(r){ return '<span class="mono" style="font-weight:600;font-size:14px">₹'+(r.amt/100000).toFixed(1)+'L</span>'; }},
+    {label:'Status', render:function(r){ return statusBadge(r.st); }},
+    {label:'Due', num:true, render:function(r){ return LK.mono(r.due, r.st==='overdue'?'var(--color-danger-text)':'var(--color-text-secondary)'); }},
+    {label:'Paid', num:true, render:function(r){ return r.paid==='—'?LK.muted('—'):LK.mono(r.paid); }},
+    {label:'Method', render:function(r){ return LK.muted(r.method); }}
+  ],
+  rows:rows
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Task</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .detail-head { display:flex; align-items:center; gap:16px; margin-bottom:16px; }
+  .tid { width:46px; height:46px; border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:13px; font-weight:700; flex:none; background:var(--color-bg-subtle); color:var(--color-text-secondary); }
+  .dh-main { min-width:0; }
+  .dh-title-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .dh-title-row h1 { font-family:var(--font-display); font-size:24px; font-weight:700; letter-spacing:-.02em; }
+  .dh-sub { font-size:13px; color:var(--color-text-tertiary); margin-top:5px; }
+  .dh-sub a { font-weight:500; }
+  .statuspill { display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; padding:5px 12px; border-radius:var(--radius-full); border:1px solid var(--color-border-default); background:var(--color-bg-surface); cursor:pointer; white-space:nowrap; }
+  .statuspill:hover { border-color:var(--color-border-strong); }
+  .statuspill .dot { width:7px; height:7px; border-radius:50%; }
+  .statuspill i { font-size:13px; color:var(--color-text-muted); }
+  .menu { position:absolute; z-index:40; background:var(--color-bg-surface-raised); border:1px solid var(--color-border-subtle); border-radius:var(--radius-md); box-shadow:var(--shadow-lg); padding:5px; min-width:160px; }
+  .menu button { display:flex; align-items:center; gap:8px; width:100%; text-align:left; font-family:var(--font-sans); font-size:13px; color:var(--color-text-primary); background:transparent; border:0; padding:7px 9px; border-radius:var(--radius-sm); cursor:pointer; }
+  .menu button:hover { background:var(--color-bg-hover); }
+  .menu .dot { width:7px; height:7px; border-radius:50%; }
+  .dgrid { display:grid; grid-template-columns:262px minmax(0,1fr) 312px; gap:16px; align-items:start; }
+  .md { font-size:13.5px; line-height:1.6; color:var(--color-text-secondary); } .md b { color:var(--color-text-primary); }
+  .conv-card { display:flex; flex-direction:column; height:380px; } .conv-card .thread { flex:1; }
+  .test-row { display:flex; align-items:center; gap:10px; padding:9px 14px; border-top:1px solid var(--color-border-subtle); font-size:13px; } .test-row:first-child { border-top:0; }
+  .effort-row { display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--color-border-subtle); } .effort-row:first-child { border-top:0; }
+  .multi { display:flex; align-items:center; } .multi .add { width:26px; height:26px; border-radius:50%; border:1px dashed var(--color-border-strong); display:inline-flex; align-items:center; justify-content:center; color:var(--color-text-muted); cursor:pointer; margin-left:4px; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="tasks"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><a href="Tasks.html">Tasks</a><i data-lucide="chevron-right"></i><span class="here">T101 · Duplicate-lead collision</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+    <div class="scroll">
+      <div class="sheet" data-screen-label="Task Detail — duplicate-lead collision">
+        <div class="detail-head">
+          <span class="tid">T101</span>
+          <div class="dh-main">
+            <div class="dh-title-row">
+              <h1>Handle duplicate-lead collision</h1>
+              <span class="statuspill" id="statusPill"><span class="dot" style="background:var(--iris-500)"></span><span id="statusLabel">In Progress</span><i data-lucide="chevron-down"></i></span>
+              <span class="schedule" style="background:var(--color-warning-bg);color:var(--color-warning-text);border:1px solid var(--color-warning-border)"><i data-lucide="clock" style="font-size:13px"></i>Due in 1d</span>
+            </div>
+            <div class="dh-sub"><span class="mono">TK-101</span> · <a href="Milestone Detail.html">M4 · Slack notifications</a> · <a href="index.html">Lead-routing automation</a></div>
+          </div>
+          <div class="spacer"></div>
+          <button class="btn btn-secondary"><i data-lucide="pencil"></i>Edit</button>
+        </div>
+
+        <div class="statstrip" style="margin-bottom:18px">
+          <div class="stat"><div class="k">Priority</div><div class="v" style="font-size:18px;color:var(--color-danger-text);font-family:var(--font-sans)">High</div></div>
+          <div class="stat"><div class="k">Time logged</div><div class="v">4.5h</div><div class="s">your effort</div></div>
+          <div class="stat"><div class="k">Tests</div><div class="v">2 / 3</div><div class="s">dev passing</div></div>
+          <div class="stat"><div class="k">Due</div><div class="v" style="font-size:16px">2026-06-04</div><div class="s">tomorrow</div></div>
+        </div>
+
+        <div class="dgrid">
+          <!-- LEFT (no money, no client) -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Task details</h3></div>
+              <div class="card-b" style="padding-top:8px">
+                <div class="meta-row"><span class="k">Task ID</span><span class="mono" style="font-size:13px;color:var(--color-text-secondary)">TK-101</span></div>
+                <div class="meta-row"><span class="k">Milestone</span><div class="ie" data-ie="static"><a href="Milestone Detail.html" style="font-size:14px">M4 · Slack notifications</a></div></div>
+                <div class="meta-row"><span class="k">Project</span><div class="ie" data-ie="static"><a href="index.html" style="font-size:14px">Lead-routing automation</a></div></div>
+                <div class="meta-row"><span class="k">Priority</span><div class="ie" data-ie="static"><span style="font-size:13px;font-weight:600;color:var(--color-danger-text)">High</span></div></div>
+                <div class="meta-row"><span class="k">Due date</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">2026-06-04</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Assignees</span><div class="multi" style="margin-top:4px"><div class="ostack"><span class="wrap" style="position:relative"><span class="avatar" style="background:var(--amber-500)">DV</span><span style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:var(--color-status-away);box-shadow:0 0 0 2px var(--color-bg-surface)"></span></span></div><span class="add"><i data-lucide="plus" style="font-size:13px"></i></span></div></div>
+                <div class="meta-row"><span class="k">Managers</span><div class="ostack" style="margin-top:4px"><span class="wrap" style="position:relative"><span class="avatar" style="background:var(--green-600)">NK</span><span style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:var(--color-status-active);box-shadow:0 0 0 2px var(--color-bg-surface)"></span></span></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Attachments</h3><span class="cnt">1 file · 1 link</span></div>
+              <div class="card-b" style="padding:6px">
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm)"><i data-lucide="image" style="font-size:18px;color:var(--color-accent)"></i><div class="t"><div class="l1">collision-cases.png</div><div class="l2 mono">PNG · 88 KB</div></div><i data-lucide="download" style="color:var(--color-text-tertiary)"></i></div>
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm);border-top:0"><i data-lucide="git-branch" style="font-size:18px;color:var(--color-accent)"></i><div class="t"><div class="l1">PR #214</div><div class="l2 mono">github.com/…</div></div><i data-lucide="external-link" style="color:var(--color-text-tertiary)"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CENTER -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Requirement</h3><i data-lucide="pencil" class="more" style="color:var(--color-text-muted);font-size:14px"></i></div>
+              <div class="card-b"><p class="md">When two leads share the same email within 24h, keep a <b>single routed record</b>. When two reps match the same territory, apply the <b>fallback owner</b> rule rather than routing to both. Edge case: same email + different phone → keep both and flag for manual merge.</p></div>
+            </div>
+            <div class="card conv-card">
+              <div style="padding:12px 14px;border-bottom:1px solid var(--color-border-subtle)">
+                <div style="display:flex;align-items:center;gap:8px"><i data-lucide="messages-square" style="color:var(--color-text-tertiary)"></i><h3 style="font-family:var(--font-sans);font-size:13px;font-weight:700">Discussion</h3><span class="cnt">internal</span></div>
+              </div>
+              <div class="thread" id="thread">
+                <div class="day">Yesterday</div>
+                <div class="msg-in"><span class="av-sm" style="background:var(--green-600)">NK</span><div><div class="bubble-in">For the same-email-different-phone case — flag for manual merge or auto-keep both?</div><div class="msg-meta">Neha K. · 15:02</div></div></div>
+                <div class="msg-out"><div><div class="bubble-out">Keep both + flag. Don't auto-merge — too risky for B2B leads.</div><div class="msg-meta" style="justify-content:flex-end">You · 15:18 · <i data-lucide="check-check" style="color:var(--color-info-fg)"></i></div></div></div>
+              </div>
+              <div class="composer">
+                <input class="inp" id="composerInput" placeholder="Add to the discussion…">
+                <button class="icon-btn" style="width:30px;height:30px"><i data-lucide="paperclip"></i></button>
+                <button class="btn btn-primary btn-sm" id="sendBtn" style="padding:8px 10px"><i data-lucide="send"></i></button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><i data-lucide="flask-conical" style="color:var(--color-text-tertiary)"></i><h3>Tests</h3><span class="cnt">dev 2/3 · UAT 0/1</span><button class="btn btn-ghost btn-sm more" style="padding:4px 8px"><i data-lucide="plus"></i>Add test</button></div>
+              <div id="testList"></div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="stack">
+            <div class="card ai-card">
+              <div class="card-h" style="border-bottom:0;padding-bottom:4px"><i data-lucide="sparkles" class="ic-fill" style="color:var(--color-accent)"></i><h3>AI Review</h3></div>
+              <div class="card-b" style="padding-top:6px"><div class="insight"><i data-lucide="info" style="color:var(--color-ai-neutral)"></i><p>2 of 3 dev tests pass. The failing one (fallback owner on collision) is a minor logic branch — otherwise this reads ready to share for QA.</p></div></div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Time logged</h3><span style="margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--color-text-tertiary)">your effort</span></div>
+              <div class="card-b">
+                <div class="effort-row"><span class="avatar" style="background:var(--amber-500);width:24px;height:24px;font-size:10px;box-shadow:none">DV</span><span style="flex:1;font-size:13px">Dev V. <span style="color:var(--color-text-muted)">(you)</span></span><span class="mono" style="font-weight:500">4.5h</span></div>
+                <div style="font-size:11px;color:var(--color-text-muted);margin-top:8px;line-height:1.4">You see your own hours. PMs see the aggregate across assignees. Hours never feed completion.</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Notes</h3><span class="cnt">1</span><button class="btn btn-ghost btn-sm more" style="padding:4px 8px"><i data-lucide="plus"></i>Add</button></div>
+              <div class="card-b"><div style="border-left:2px solid var(--color-accent-border);padding-left:12px"><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.5">Manual-merge flag should surface in the PM's queue, not block routing.</div><div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">Dev V. · 2026-06-02</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg"></span></div>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="inline-edit.js"></script>
+<script>
+var STATUSES = [['To-do','var(--n-400)'],['In Progress','var(--iris-500)'],['QA Review','var(--sky-500)'],['Stuck','var(--red-500)'],['Done','var(--green-500)']];
+var tests = [['dev','Same email < 24h → single record','pass'],['dev','Territory match → correct owner','pass'],['dev','Fallback owner on collision','fail'],['uat','End-to-end routing sanity','pending']];
+document.getElementById('testList').innerHTML = tests.map(function(t){
+  var ic = t[2]==='pass'?'circle-check':t[2]==='fail'?'circle-x':'circle-dashed';
+  var col = t[2]==='pass'?'var(--color-success-text)':t[2]==='fail'?'var(--color-danger-text)':'var(--color-text-muted)';
+  return '<div class="test-row"><i data-lucide="'+ic+'" class="'+(t[2]==='pass'?'ic-fill':'')+'" style="font-size:17px;color:'+col+'"></i><span class="tag" style="text-transform:uppercase;font-size:9px;letter-spacing:.05em">'+(t[0]==='dev'?'DEV':'UAT')+'</span><span style="flex:1;color:var(--color-text-primary)">'+t[1]+'</span>'+(t[2]==='pending'?'<span style="font-size:11px;color:var(--color-text-muted)">pending</span>':'')+'</div>';
+}).join('');
+if (window.lucide) lucide.createIcons();
+initInlineEdit();
+document.getElementById('navToggle').onclick=function(){ document.getElementById('app').classList.toggle('collapsed'); };
+function send(){ var inp=document.getElementById('composerInput'),v=inp.value.trim(); if(!v)return; var th=document.getElementById('thread'),now=new Date().toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}); var el=document.createElement('div'); el.className='msg-out'; el.innerHTML='<div><div class="bubble-out">'+v.replace(/</g,'&lt;')+'</div><div class="msg-meta" style="justify-content:flex-end">You · '+now+' · <i data-lucide="check-check" style="color:var(--color-info-fg)"></i></div></div>'; th.appendChild(el); inp.value=''; th.scrollTop=th.scrollHeight; if(window.lucide)lucide.createIcons(); }
+document.getElementById('sendBtn').onclick=send;
+document.getElementById('composerInput').addEventListener('keydown',function(e){ if(e.key==='Enter')send(); });
+var pill=document.getElementById('statusPill'),openMenu=null;
+function closeMenu(){ if(openMenu){ openMenu.remove(); openMenu=null; } }
+pill.addEventListener('click',function(e){ e.stopPropagation(); if(openMenu){ closeMenu(); return; } var m=document.createElement('div'); m.className='menu'; m.innerHTML=STATUSES.map(function(s){ return '<button data-s="'+s[0]+'"><span class="dot" style="background:'+s[1]+'"></span>'+s[0]+'</button>'; }).join(''); document.body.appendChild(m); var r=pill.getBoundingClientRect(); m.style.top=(r.bottom+6)+'px'; m.style.left=r.left+'px'; openMenu=m; m.addEventListener('click',function(ev){ var b=ev.target.closest('button'); if(!b)return; var s=STATUSES.find(function(x){return x[0]===b.dataset.s;}); pill.querySelector('.dot').style.background=s[1]; document.getElementById('statusLabel').textContent=s[0]; closeMenu(); gsToast('Status saved · '+s[0]); }); });
+document.addEventListener('click',closeMenu);
+</script>
+</body>
+</html>

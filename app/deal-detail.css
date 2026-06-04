@@ -1,0 +1,32 @@
+/* app/deal-detail.css — page-specific rules for the Deal Detail cockpit that are
+   NOT already provided by app/contact-detail.css (which this page also imports
+   for the shared cockpit chrome: .detail-head, .dgrid, .conv-card, .menu,
+   .statuspill, .multi, .schedule, .more-link, .attach-*).
+
+   Ported from design/handoff/ui_kits/internal/Deal Detail.html's <style> block —
+   only the rules unique to the deal screen (the convert-to-project card). Tokens
+   only: every color is a var(); bare CSS px metrics are kept as-is. */
+
+/* Hero deal value beside the header (mirrors .dh-ltv but labelled "Deal value").
+   .dh-ltv itself comes from contact-detail.css; this is just an alias hook in
+   case the deal hero needs a tweak — kept minimal to avoid drift. */
+
+/* Convert-to-project card (the "Deal won" gradient panel on the right rail). */
+.convert {
+  background: linear-gradient(180deg, var(--color-success-bg), transparent 70%);
+  border-color: var(--color-success-border);
+}
+
+/* The deal header's stat strip uses the shared .statstrip / .stat from the shell;
+   the owners stat needs its avatar stack to sit on its own line. */
+.statstrip .stat .ostack {
+  margin-top: 6px;
+}
+
+/* Linked-payment summary chip amount + status, sitting in a .sum row. */
+.pay-amt {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}

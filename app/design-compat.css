@@ -1,0 +1,28 @@
+/* Design-prototype token names → our compiled tokens (app/tokens.css).
+   The design CSS (design-shell.css) and ported markup use SHORT token names
+   (--iris-500, --n-400, --font-sans, --dur-base …). Our compiled tokens use
+   LONG names (--primitive-iris-500, --font-family-sans, --motion-duration-base).
+   This file aliases the short names to the long ones so the design CSS resolves
+   unchanged. Every value is a var() reference — no raw literals. */
+:root {
+  /* primitive scales: design uses --iris-500, --sky-600, --n-400 … */
+  --iris-50:var(--primitive-iris-50); --iris-100:var(--primitive-iris-100); --iris-200:var(--primitive-iris-200); --iris-300:var(--primitive-iris-300); --iris-400:var(--primitive-iris-400); --iris-500:var(--primitive-iris-500); --iris-600:var(--primitive-iris-600); --iris-700:var(--primitive-iris-700); --iris-800:var(--primitive-iris-800); --iris-900:var(--primitive-iris-900); --iris-950:var(--primitive-iris-950);
+  --sky-50:var(--primitive-sky-50); --sky-100:var(--primitive-sky-100); --sky-200:var(--primitive-sky-200); --sky-300:var(--primitive-sky-300); --sky-400:var(--primitive-sky-400); --sky-500:var(--primitive-sky-500); --sky-600:var(--primitive-sky-600); --sky-700:var(--primitive-sky-700); --sky-800:var(--primitive-sky-800); --sky-900:var(--primitive-sky-900);
+  --green-50:var(--primitive-green-50); --green-100:var(--primitive-green-100); --green-200:var(--primitive-green-200); --green-300:var(--primitive-green-300); --green-400:var(--primitive-green-400); --green-500:var(--primitive-green-500); --green-600:var(--primitive-green-600); --green-700:var(--primitive-green-700); --green-800:var(--primitive-green-800); --green-900:var(--primitive-green-900);
+  --amber-50:var(--primitive-amber-50); --amber-100:var(--primitive-amber-100); --amber-200:var(--primitive-amber-200); --amber-300:var(--primitive-amber-300); --amber-400:var(--primitive-amber-400); --amber-500:var(--primitive-amber-500); --amber-600:var(--primitive-amber-600); --amber-700:var(--primitive-amber-700); --amber-800:var(--primitive-amber-800); --amber-900:var(--primitive-amber-900);
+  --red-50:var(--primitive-red-50); --red-100:var(--primitive-red-100); --red-200:var(--primitive-red-200); --red-300:var(--primitive-red-300); --red-400:var(--primitive-red-400); --red-500:var(--primitive-red-500); --red-600:var(--primitive-red-600); --red-700:var(--primitive-red-700); --red-800:var(--primitive-red-800); --red-900:var(--primitive-red-900);
+  --n-50:var(--primitive-neutral-50); --n-100:var(--primitive-neutral-100); --n-200:var(--primitive-neutral-200); --n-300:var(--primitive-neutral-300); --n-400:var(--primitive-neutral-400); --n-500:var(--primitive-neutral-500); --n-600:var(--primitive-neutral-600); --n-700:var(--primitive-neutral-700); --n-800:var(--primitive-neutral-800); --n-900:var(--primitive-neutral-900); --n-950:var(--primitive-neutral-950);
+  /* Self-hosted fonts (next/font in app/layout.tsx) override the literal family
+     stacks compiled into tokens.css, so real Bricolage/Hanken/IBM Plex Mono load
+     instead of a system fallback. These re-declarations win (later @import). */
+  --font-family-display: var(--font-bricolage), 'Bricolage Grotesque', 'Hanken Grotesk', system-ui, sans-serif;
+  --font-family-sans: var(--font-hanken), 'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+  --font-family-mono: var(--font-plex-mono), 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  /* fonts: design uses --font-sans/display/mono */
+  --font-sans:var(--font-family-sans); --font-display:var(--font-family-display); --font-mono:var(--font-family-mono);
+  /* motion: design uses --dur-* and --ease-* names */
+  --dur-instant:var(--motion-duration-instant); --dur-fast:var(--motion-duration-fast); --dur-base:var(--motion-duration-base); --dur-slow:var(--motion-duration-slow);
+  --ease-standard:var(--motion-ease-standard); --ease-out:var(--motion-ease-out); --ease-in:var(--motion-ease-in); --ease-spring:var(--motion-ease-spring);
+  /* channels: design uses --ch-* per conversation channel; aliased to the compiled primitives. */
+  --ch-whatsapp:var(--primitive-channel-whatsapp); --ch-gmail:var(--primitive-channel-gmail); --ch-slack:var(--primitive-channel-slack); --ch-phone:var(--primitive-channel-phone); --ch-upwork:var(--primitive-channel-upwork); --ch-teams:var(--primitive-channel-teams); --ch-outlook:var(--primitive-channel-outlook); --ch-zoom:var(--primitive-channel-zoom); --ch-fireflies:var(--primitive-channel-fireflies);
+}

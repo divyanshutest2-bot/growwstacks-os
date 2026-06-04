@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Project</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<style>
+  html, body { height: 100%; }
+  body { overflow: hidden; }
+
+  .app { display: grid; grid-template-columns: var(--nav-w, 232px) 1fr; height: 100vh; transition: grid-template-columns var(--dur-base) var(--ease-standard); }
+  .app.collapsed { --nav-w: 64px; }
+
+  /* ---- Sidebar ---- */
+  .sidebar { background: var(--color-bg-sidebar); display: flex; flex-direction: column; padding: 14px 12px; gap: 2px; overflow: hidden; }
+  .brandrow { display: flex; align-items: center; gap: 10px; padding: 4px 8px 14px; }
+  .brandmark { width: 30px; height: 30px; border-radius: 8px; background: var(--iris-500); display: flex; align-items: center; justify-content: center; flex: none; }
+  .brandmark i { color: #fff; }
+  .brandname { font-family: var(--font-display); font-weight: 800; font-size: 16px; letter-spacing: -.02em; color: #fff; white-space: nowrap; }
+  .brandname span { color: rgba(255,255,255,.5); font-weight: 600; }
+  .collapsed .brandname, .collapsed .ni-label, .collapsed .nh, .collapsed .acct-meta, .collapsed .ni-badge { display: none; }
+  .collapsed .brandrow { justify-content: center; padding: 4px 0 14px; }
+  .collapsed .ni { justify-content: center; }
+
+  .ni { display: flex; align-items: center; gap: 11px; padding: 8px 10px; border-radius: var(--radius-md); color: var(--color-sidebar-text-muted); font-size: 13px; font-weight: 500; cursor: pointer; white-space: nowrap; transition: background var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard); }
+  .ni i { font-size: 17px; flex: none; }
+  .ni:hover { background: var(--color-bg-sidebar-hover); color: var(--color-sidebar-text); }
+  .ni.active { background: var(--color-bg-sidebar-active); color: var(--color-sidebar-text-active); box-shadow: inset 2px 0 0 var(--iris-400); }
+  .ni-badge { margin-left: auto; background: var(--iris-500); color: #fff; font-size: 10px; font-weight: 700; border-radius: var(--radius-full); padding: 1px 7px; }
+  .nh { font-size: 9px; letter-spacing: .1em; text-transform: uppercase; color: var(--color-sidebar-heading); padding: 12px 10px 4px; }
+  .acct { margin-top: auto; padding-top: 10px; }
+  .acct-row { display: flex; align-items: center; gap: 9px; padding: 8px 10px; border-radius: var(--radius-md); background: var(--color-bg-sidebar-hover); cursor: pointer; }
+  .acct-meta { flex: 1; min-width: 0; }
+  .acct-meta .n { font-size: 12px; color: var(--color-sidebar-text-active); font-weight: 600; }
+  .acct-meta .r { font-size: 10px; color: var(--color-sidebar-text-muted); }
+
+  /* ---- Main ---- */
+  .main { display: flex; flex-direction: column; overflow: hidden; background: var(--color-bg-app); }
+  .topbar { height: 52px; flex: none; display: flex; align-items: center; gap: 12px; padding: 0 22px; border-bottom: 1px solid var(--color-border-subtle); background: var(--color-bg-surface); }
+  .crumb { display: flex; align-items: center; gap: 7px; font-size: 13px; color: var(--color-text-tertiary); }
+  .crumb i { font-size: 13px; }
+  .crumb .here { color: var(--color-text-primary); font-weight: 600; }
+  .icon-btn { width: 32px; height: 32px; border-radius: var(--radius-md); display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); cursor: pointer; border: 0; background: transparent; transition: background var(--dur-fast) var(--ease-standard); }
+  .icon-btn:hover { background: var(--color-bg-hover); color: var(--color-text-primary); }
+  .topbar .search { display: flex; align-items: center; gap: 8px; background: var(--color-bg-subtle); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 6px 11px; width: 220px; color: var(--color-text-muted); font-size: 13px; }
+
+  .scroll { flex: 1; overflow-y: auto; padding: 22px; }
+  .sheet { max-width: 1180px; margin: 0 auto; }
+
+  /* ---- Header strip ---- */
+  .phead { display: flex; flex-direction: column; gap: 16px; margin-bottom: 18px; }
+  .ptitle-row { display: flex; align-items: flex-start; gap: 14px; }
+  .ptitle { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+  .pid { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-tertiary); margin-top: 4px; }
+  .badge-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .spacer { flex: 1; }
+
+  .statstrip { display: flex; background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 14px 4px; }
+  .stat { flex: 1; padding: 0 18px; }
+  .stat + .stat { border-left: 1px solid var(--color-border-subtle); }
+  .stat .k { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-tertiary); }
+  .stat .v { font-family: var(--font-mono); font-size: 24px; font-weight: 600; line-height: 1.15; margin-top: 4px; font-variant-numeric: tabular-nums; }
+  .stat .s { font-size: 11px; color: var(--color-text-tertiary); margin-top: 1px; }
+
+  /* ---- Columns ---- */
+  .cols { display: grid; grid-template-columns: 248px 1fr 308px; gap: 16px; align-items: start; margin-top: 18px; }
+  .card { background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+  .card-h { display: flex; align-items: center; gap: 8px; padding: 12px 14px; border-bottom: 1px solid var(--color-border-subtle); }
+  .card-h h3 { font-family: var(--font-sans); font-size: 13px; font-weight: 700; white-space: nowrap; }
+  .card-h .cnt { background: var(--color-bg-subtle); color: var(--color-text-secondary); font-size: 9px; font-weight: 600; border-radius: var(--radius-full); padding: 2px 7px; }
+  .card-b { padding: 14px; }
+  .stack { display: flex; flex-direction: column; gap: 16px; }
+
+  /* meta list */
+  .meta-row { display: flex; flex-direction: column; gap: 2px; padding: 9px 0; border-top: 1px solid var(--color-border-subtle); }
+  .meta-row:first-child { border-top: 0; padding-top: 0; }
+  .meta-row .k { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--color-text-tertiary); }
+
+  /* inline edit field */
+  .ie { display: inline-flex; align-items: center; gap: 6px; padding: 4px 7px; margin: -4px -7px; border-radius: var(--radius-sm); border: 1px solid transparent; cursor: text; font-size: 14px; color: var(--color-text-primary); transition: background var(--dur-fast) var(--ease-standard); max-width: 100%; }
+  .ie:hover { background: var(--color-bg-hover); }
+  .ie:hover .ie-pencil { opacity: 1; }
+  .ie-pencil { opacity: 0; margin-left: auto; color: var(--color-text-muted); font-size: 13px; transition: opacity var(--dur-fast); flex: none; }
+  .ie.editing { background: var(--color-bg-surface); border-color: var(--color-border-focus); box-shadow: var(--shadow-focus); cursor: text; }
+  .ie input { font-family: inherit; font-size: 14px; color: var(--color-text-primary); border: 0; outline: 0; background: transparent; width: 100%; min-width: 60px; }
+  .ie-saved { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--color-success-text); margin-left: auto; }
+  .ie-saving { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: var(--color-text-tertiary); margin-left: auto; }
+
+  /* tabs */
+  .tabs { display: flex; gap: 2px; border-bottom: 1px solid var(--color-border-subtle); padding: 0 8px; }
+  .tab { display: flex; align-items: center; gap: 7px; padding: 11px 12px; font-size: 13px; font-weight: 600; color: var(--color-text-tertiary); cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: -1px; transition: color var(--dur-fast); white-space: nowrap; }
+  .tab i { font-size: 15px; }
+  .tab .tc { font-family: var(--font-mono); font-size: 10px; color: var(--color-text-muted); }
+  .tab:hover { color: var(--color-text-secondary); }
+  .tab.active { color: var(--color-accent-text); border-bottom-color: var(--color-accent); }
+  .pane { display: none; }
+  .pane.active { display: block; }
+
+  /* timeline */
+  .tl-seg { display: flex; align-items: center; justify-content: center; height: 28px; border-radius: 3px; font-size: 9px; color: #fff; font-weight: 600; overflow: hidden; white-space: nowrap; }
+  .tl-legend { display: flex; gap: 16px; margin-top: 12px; font-size: 11px; flex-wrap: wrap; }
+  .tl-legend .sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+  .tl-legend span.item { display: flex; align-items: center; gap: 6px; color: var(--color-text-secondary); }
+
+  /* conversation */
+  .chips { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .chip { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: var(--radius-full); border: 1px solid var(--color-border-subtle); background: var(--color-bg-surface); color: var(--color-text-secondary); cursor: pointer; transition: all var(--dur-fast); }
+  .chip .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .chip.active { background: var(--color-accent-subtle); border-color: var(--color-accent-border); color: var(--color-accent-text); }
+  .thread { display: flex; flex-direction: column; gap: 12px; padding: 16px; background: var(--color-bg-subtle); max-height: 420px; overflow-y: auto; }
+  .day { text-align: center; font-size: 10px; color: var(--color-text-muted); text-transform: uppercase; letter-spacing: .08em; }
+  .msg-in { display: flex; gap: 8px; max-width: 82%; }
+  .msg-out { display: flex; justify-content: flex-end; }
+  .bubble-in { background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-radius: 4px 12px 12px 12px; padding: 8px 11px; font-size: 13px; line-height: 1.45; }
+  .bubble-out { background: var(--iris-600); color: #fff; border-radius: 12px 4px 12px 12px; padding: 8px 11px; font-size: 13px; line-height: 1.45; max-width: 82%; }
+  .msg-meta { font-size: 10px; color: var(--color-text-muted); margin-top: 3px; display: flex; align-items: center; gap: 5px; }
+  .msg-meta .dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .av-sm { width: 26px; height: 26px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; flex: none; }
+  .callcard { background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 10px 12px; display: flex; align-items: center; gap: 10px; }
+  .composer { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-top: 1px solid var(--color-border-subtle); }
+  .composer .inp { flex: 1; border: 1px solid var(--color-border-default); border-radius: var(--radius-full); padding: 8px 14px; font-size: 13px; font-family: inherit; outline: 0; color: var(--color-text-primary); }
+  .composer .inp:focus { border-color: var(--color-border-focus); box-shadow: var(--shadow-focus); }
+
+  /* milestones / tasks rows */
+  .row-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--color-border-subtle); }
+  .row-item:first-child { border-top: 0; }
+  .row-item:hover { background: var(--color-bg-hover); }
+  .ms-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 12px; font-weight: 600; flex: none; }
+  .check { width: 18px; height: 18px; border-radius: var(--radius-sm); border: 1.5px solid var(--color-border-strong); display: flex; align-items: center; justify-content: center; cursor: pointer; flex: none; color: #fff; }
+  .check.done { background: var(--color-success-solid); border-color: var(--color-success-solid); }
+  .check.done i { display: block; }
+  .check i { display: none; font-size: 12px; }
+
+  /* AI card */
+  .ai-card { background: linear-gradient(180deg, var(--color-ai-tint), transparent 64%); }
+  .insight { display: flex; gap: 10px; padding: 10px 12px; border-radius: var(--radius-md); background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); }
+  .insight i { font-size: 16px; margin-top: 1px; flex: none; }
+  .insight p { font-size: 12.5px; color: var(--color-text-primary); line-height: 1.45; }
+  .proposal { border: 1px solid var(--color-accent-border); border-radius: var(--radius-md); padding: 12px; background: var(--color-bg-surface); }
+
+  /* billing */
+  .bar { height: 8px; border-radius: var(--radius-full); background: var(--color-bg-active); overflow: hidden; }
+  .bar > div { height: 100%; background: var(--color-success-solid); border-radius: var(--radius-full); }
+  .bill-row { display: flex; justify-content: space-between; padding: 6px 0; border-top: 1px solid var(--color-border-subtle); font-size: 13px; }
+  .bill-row .v { font-family: var(--font-mono); font-weight: 500; }
+
+  .avatar { width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; color: #fff; flex: none; box-shadow: 0 0 0 2px var(--color-bg-surface); }
+  .ostack { display: flex; align-items: center; }
+  .ostack .wrap { position: relative; margin-right: -8px; }
+  .ostack .sdot { position: absolute; bottom: -1px; right: -1px; width: 9px; height: 9px; border-radius: 50%; box-shadow: 0 0 0 2px var(--color-bg-surface); }
+
+  /* toast */
+  .toast { position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(20px); background: var(--n-900); color: #fff; font-size: 13px; padding: 10px 16px; border-radius: var(--radius-md); box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 8px; opacity: 0; pointer-events: none; transition: all var(--dur-base) var(--ease-out); z-index: 50; }
+  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+  .toast i { color: var(--color-success-fg); }
+
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: var(--color-border-default); border-radius: 999px; border: 3px solid var(--color-bg-app); }
+  .thread::-webkit-scrollbar-thumb { border-color: var(--color-bg-subtle); }
+</style>
+</head>
+<body>
+<div class="app" id="app" data-screen-label="Project Detail — Internal">
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar">
+    <div class="brandrow">
+      <span class="brandmark"><i data-lucide="layers" class="ic-fill"></i></span>
+      <span class="brandname">GrowwStacks<span> OS</span></span>
+    </div>
+    <div class="ni"><i data-lucide="layout-grid"></i><span class="ni-label">Dashboard</span></div>
+    <div class="ni"><i data-lucide="building-2"></i><span class="ni-label">Companies</span></div>
+    <div class="ni"><i data-lucide="contact"></i><span class="ni-label">Contacts</span></div>
+    <div class="ni"><i data-lucide="handshake"></i><span class="ni-label">Deals</span></div>
+    <div class="ni active"><i data-lucide="kanban"></i><span class="ni-label">Projects</span></div>
+    <div class="ni"><i data-lucide="flag"></i><span class="ni-label">Milestones</span></div>
+    <div class="ni"><i data-lucide="receipt"></i><span class="ni-label">Payments</span></div>
+    <div class="ni"><i data-lucide="square-check"></i><span class="ni-label">Tasks</span></div>
+    <div class="nh">AI Supervisor</div>
+    <div class="ni"><i data-lucide="sparkles" class="ic-fill" style="color:var(--iris-300)"></i><span class="ni-label">Attention</span><span class="ni-badge">7</span></div>
+    <div class="nh">Admin</div>
+    <div class="ni"><i data-lucide="user-cog"></i><span class="ni-label">Users</span></div>
+    <div class="ni"><i data-lucide="cable"></i><span class="ni-label">Integrations</span></div>
+    <div class="acct">
+      <div class="acct-row">
+        <span class="avatar" style="background:var(--iris-600);box-shadow:none;width:26px;height:26px">AR</span>
+        <div class="acct-meta"><div class="n">Arjun Rao</div><div class="r">Admin</div></div>
+        <i data-lucide="chevrons-up-down" style="color:var(--color-sidebar-text-muted);font-size:14px" class="acct-meta"></i>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ===== Main ===== -->
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle" title="Collapse nav"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb">
+        <span>Projects</span><i data-lucide="chevron-right"></i><span class="here">Lead-routing automation</span>
+      </nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+
+    <div class="scroll">
+      <div class="sheet">
+
+        <!-- header -->
+        <div class="phead">
+          <div class="ptitle-row">
+            <div>
+              <div class="ie" data-ie="text" style="font-size:28px"><span class="ie-val ptitle">Lead-routing automation</span><i data-lucide="pencil" class="ie-pencil"></i></div>
+              <div class="pid">PRJ-0418 · Acme Robotics Pvt Ltd</div>
+            </div>
+            <div class="spacer"></div>
+            <div class="badge-row">
+              <span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span>
+              <span class="schedule" style="background:var(--color-warning-bg);color:var(--color-warning-text);border:1px solid var(--color-warning-border)"><i data-lucide="clock" style="font-size:13px"></i>Due in 3d</span>
+              <button class="btn btn-secondary btn-sm"><i data-lucide="ellipsis"></i></button>
+            </div>
+          </div>
+          <div class="statstrip">
+            <div class="stat"><div class="k">Agreed</div><div class="v">₹18.0L</div><div class="s">contract value</div></div>
+            <div class="stat"><div class="k">Received</div><div class="v" style="color:var(--color-success-text)">₹6.8L</div><div class="s">38% collected</div></div>
+            <div class="stat"><div class="k">Outstanding</div><div class="v" style="color:var(--color-warning-text)">₹11.2L</div><div class="s">due in 14d</div></div>
+            <div class="stat"><div class="k">Milestones</div><div class="v">3 / 7</div><div class="s">on track</div></div>
+            <div class="stat"><div class="k">Delivery</div><div class="v" style="color:var(--color-success-text)">+2d</div><div class="s">ahead of plan</div></div>
+          </div>
+        </div>
+
+        <!-- columns -->
+        <div class="cols">
+
+          <!-- LEFT META -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Details</h3></div>
+              <div class="card-b" style="padding-top:8px">
+                <div class="meta-row"><span class="k">Company</span><div class="ie" data-ie="static"><span class="ie-val" style="color:var(--color-text-link)">Acme Robotics Pvt Ltd</span></div></div>
+                <div class="meta-row"><span class="k">Linked deal</span><div class="ie" data-ie="static"><span class="ie-val" style="color:var(--color-text-link)">DEAL-2418 · Annual retainer</span></div></div>
+                <div class="meta-row"><span class="k">App / area</span><div class="ie" data-ie="text"><span class="ie-val">HubSpot + Slack routing</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Start date</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">2026-05-01</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Target date</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">2026-06-14</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Owners</h3></div>
+              <div class="card-b">
+                <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:8px">Project managers</div>
+                <div class="ostack" style="margin-bottom:14px">
+                  <span class="wrap"><span class="avatar" style="background:var(--sky-600)">PM</span><span class="sdot" style="background:var(--color-status-active)"></span></span>
+                  <span class="wrap"><span class="avatar" style="background:var(--iris-600)">AR</span><span class="sdot" style="background:var(--color-status-active)"></span></span>
+                  <span class="avatar" style="background:var(--color-bg-active);color:var(--color-text-secondary)">+</span>
+                </div>
+                <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:8px">Developers</div>
+                <div class="ostack">
+                  <span class="wrap"><span class="avatar" style="background:var(--green-600)">NK</span><span class="sdot" style="background:var(--color-status-active)"></span></span>
+                  <span class="wrap"><span class="avatar" style="background:var(--amber-500)">DV</span><span class="sdot" style="background:var(--color-status-away)"></span></span>
+                  <span class="wrap"><span class="avatar" style="background:var(--n-500)">SK</span><span class="sdot" style="background:var(--color-status-left)"></span></span>
+                  <span class="avatar" style="background:var(--color-bg-active);color:var(--color-text-secondary)">+</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Health</h3></div>
+              <div class="card-b">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+                  <span style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--color-success-text)">Good</span>
+                  <span class="schedule" style="background:var(--color-success-bg);color:var(--color-success-text);border:1px solid var(--color-success-border)"><i data-lucide="trending-up" style="font-size:12px"></i>Stable</span>
+                </div>
+                <div style="font-size:12px;color:var(--color-text-tertiary);line-height:1.45">No blockers on our side. One open dependency on the client.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CENTER -->
+          <div class="stack">
+            <!-- Timeline -->
+            <div class="card">
+              <div class="card-h"><i data-lucide="git-commit-horizontal" style="color:var(--color-text-tertiary)"></i><h3>Delivery timeline</h3><span class="cnt">43 days</span><span style="margin-left:auto;font-size:11px;color:var(--color-text-tertiary)">who caused the delay</span></div>
+              <div class="card-b">
+                <div style="display:flex;gap:3px">
+                  <div class="tl-seg" style="width:28%;background:var(--color-tl-ourwork)">12d</div>
+                  <div class="tl-seg" style="width:34%;background:var(--color-tl-waiting)">15d</div>
+                  <div class="tl-seg" style="width:14%;background:var(--color-tl-blocked)">6d</div>
+                  <div class="tl-seg" style="width:24%;background:var(--color-tl-ourwork)">10d</div>
+                </div>
+                <div style="display:flex;justify-content:space-between;font-family:var(--font-mono);font-size:10px;color:var(--color-text-muted);margin-top:6px"><span>May 1</span><span>Jun 12</span></div>
+                <div class="tl-legend">
+                  <span class="item"><span class="sw" style="background:var(--color-tl-ourwork)"></span>Our work · <b>22d</b></span>
+                  <span class="item"><span class="sw" style="background:var(--color-tl-waiting)"></span>Waiting on client · <b>15d</b></span>
+                  <span class="item"><span class="sw" style="background:var(--color-tl-blocked)"></span>Blocked · <b>6d</b></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tabs card -->
+            <div class="card">
+              <div class="tabs" id="tabs">
+                <div class="tab active" data-tab="conv"><i data-lucide="messages-square"></i>Conversation <span class="tc">24</span></div>
+                <div class="tab" data-tab="ms"><i data-lucide="flag"></i>Milestones <span class="tc">7</span></div>
+                <div class="tab" data-tab="tasks"><i data-lucide="square-check"></i>Tasks <span class="tc">11</span></div>
+                <div class="tab" data-tab="tests"><i data-lucide="flask-conical"></i>Tests <span class="tc">0</span></div>
+              </div>
+
+              <!-- conversation pane -->
+              <div class="pane active" data-pane="conv">
+                <div style="padding:12px 14px;border-bottom:1px solid var(--color-border-subtle)">
+                  <div class="chips" id="chips">
+                    <span class="chip active" data-ch="all">All</span>
+                    <span class="chip" data-ch="wa"><span class="dot" style="background:var(--ch-whatsapp)"></span>WhatsApp</span>
+                    <span class="chip" data-ch="gmail"><span class="dot" style="background:var(--ch-gmail)"></span>Gmail</span>
+                    <span class="chip" data-ch="slack"><span class="dot" style="background:var(--ch-slack)"></span>Slack</span>
+                    <span class="chip" data-ch="call"><span class="dot" style="background:var(--ch-phone)"></span>Calls</span>
+                  </div>
+                </div>
+                <div class="thread" id="thread">
+                  <div class="day">Yesterday</div>
+                  <div class="msg-in"><span class="av-sm" style="background:var(--ch-whatsapp)">RM</span><div><div class="bubble-in">Hey — any update on the revised scope doc?</div><div class="msg-meta"><span class="dot" style="background:var(--ch-whatsapp)"></span>WhatsApp · Ravi M. · 9:14</div></div></div>
+                  <div class="msg-out"><div><div class="bubble-out">On it — sending the updated SOW by EOD today.</div><div class="msg-meta" style="justify-content:flex-end"><span class="dot" style="background:var(--ch-whatsapp)"></span>You · 9:31 · <i data-lucide="check-check" style="color:var(--color-info-fg)"></i></div></div></div>
+                  <div class="callcard">
+                    <div style="width:34px;height:34px;border-radius:var(--radius-md);background:var(--color-info-bg);display:flex;align-items:center;justify-content:center;flex:none"><i data-lucide="phone" class="ic-fill" style="color:var(--color-info-solid)"></i></div>
+                    <div style="flex:1"><div style="font-size:13px;font-weight:600">Discovery call · 32 min</div><div style="font-size:11px;color:var(--color-text-tertiary)">Zoom · Arjun, Priya, 2 from Acme</div></div>
+                    <a class="badge" style="background:var(--color-bg-subtle);color:var(--color-text-secondary);font-size:9px" href="#"><i data-lucide="play" class="ic-fill" style="font-size:11px"></i>Recording</a>
+                    <a class="badge" style="background:var(--color-ai-tint);color:var(--color-accent-text);font-size:9px" href="#"><i data-lucide="sparkles" style="font-size:11px"></i>AI summary</a>
+                  </div>
+                  <div class="day">Today</div>
+                  <div class="msg-in"><span class="av-sm" style="background:var(--ch-gmail)">RM</span><div><div class="bubble-in">Got it, thanks. Reviewing with the team now — will confirm milestone 4 scope by tomorrow.</div><div class="msg-meta"><span class="dot" style="background:var(--ch-gmail)"></span>Gmail · Ravi M. · 11:02</div></div></div>
+                </div>
+                <div class="composer">
+                  <button class="icon-btn" style="width:30px;height:30px" title="Channel"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--ch-whatsapp);display:inline-block"></span></button>
+                  <input class="inp" id="composerInput" placeholder="Reply via WhatsApp…">
+                  <button class="icon-btn" style="width:30px;height:30px"><i data-lucide="paperclip"></i></button>
+                  <button class="btn btn-primary btn-sm" id="sendBtn" style="padding:8px 10px"><i data-lucide="send"></i></button>
+                </div>
+              </div>
+
+              <!-- milestones pane -->
+              <div class="pane" data-pane="ms">
+                <div id="msList"></div>
+              </div>
+
+              <!-- tasks pane -->
+              <div class="pane" data-pane="tasks">
+                <div id="taskList"></div>
+              </div>
+
+              <!-- tests pane -->
+              <div class="pane" data-pane="tests">
+                <div style="padding:40px 24px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:6px">
+                  <div style="width:48px;height:48px;border-radius:var(--radius-lg);background:var(--color-accent-subtle);display:flex;align-items:center;justify-content:center;margin-bottom:6px"><i data-lucide="flask-conical" style="font-size:24px;color:var(--color-accent)"></i></div>
+                  <div style="font-weight:600;font-size:15px">No tests recorded yet</div>
+                  <div style="font-size:13px;color:var(--color-text-tertiary);max-width:320px">A minimum of 3 tests is expected before QA review. Add the first one to get started.</div>
+                  <button class="btn btn-primary btn-sm" style="margin-top:10px"><i data-lucide="plus"></i>Record a test</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT RAIL -->
+          <div class="stack">
+            <!-- AI -->
+            <div class="card ai-card">
+              <div class="card-h" style="border-bottom:0;padding-bottom:4px"><i data-lucide="sparkles" class="ic-fill" style="color:var(--color-accent)"></i><h3>AI Supervisor</h3><span style="margin-left:auto;font-size:10px;color:var(--color-text-muted)">4m ago</span></div>
+              <div class="card-b" style="padding-top:6px;display:flex;flex-direction:column;gap:8px">
+                <div class="insight"><i data-lucide="trending-up" style="color:var(--color-ai-positive)"></i><p>Milestone 2 shipped 2 days early — fastest turnaround on this account so far.</p></div>
+                <div class="insight"><i data-lucide="info" style="color:var(--color-ai-neutral)"></i><p>Last client reply was 6 days ago; a gentle check-in is usually sent around now.</p></div>
+                <div class="insight"><i data-lucide="triangle-alert" style="color:var(--color-ai-risk)"></i><p>Payment 2 is 5 days overdue while work continues — worth confirming before milestone 4.</p></div>
+
+                <div class="proposal" id="proposal">
+                  <div style="display:flex;align-items:center;gap:7px;margin-bottom:7px"><i data-lucide="sparkles" class="ic-fill" style="color:var(--color-accent);font-size:14px"></i><span style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-accent-text);font-weight:700;white-space:nowrap">AI proposes</span></div>
+                  <div style="font-size:13px;font-weight:600;margin-bottom:4px">Create a task for Neha K. — "Send Acme the revised SOW"</div>
+                  <div style="font-size:11.5px;color:var(--color-text-secondary);display:flex;gap:6px;margin-bottom:12px"><i data-lucide="quote" style="margin-top:2px;color:var(--color-text-muted);font-size:13px"></i><span>Based on: client asked for updated scope in WhatsApp (2d ago) and no task exists yet.</span></div>
+                  <div style="display:flex;gap:8px"><button class="btn btn-primary btn-sm" data-prop="confirm"><i data-lucide="check"></i>Confirm</button><button class="btn btn-secondary btn-sm" data-prop="reject"><i data-lucide="x"></i>Reject</button></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Billing -->
+            <div class="card">
+              <div class="card-h"><h3>Billing</h3><span style="margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--color-text-tertiary)">38% collected</span></div>
+              <div class="card-b">
+                <div class="bar" style="margin-bottom:14px"><div style="width:38%"></div></div>
+                <div class="bill-row" style="border-top:0;padding-top:0"><span style="color:var(--color-text-secondary)">Agreed</span><span class="v">₹18.00L</span></div>
+                <div class="bill-row"><span style="color:var(--color-text-secondary)">Received</span><span class="v" style="color:var(--color-success-text)">₹6.80L</span></div>
+                <div class="bill-row"><span style="color:var(--color-text-secondary)">Outstanding</span><span class="v" style="color:var(--color-warning-text)">₹11.20L</span></div>
+              </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="card">
+              <div class="card-h"><h3>Notes</h3><span class="cnt">2</span><button class="btn btn-ghost btn-sm" style="margin-left:auto;padding:4px 8px"><i data-lucide="plus"></i>Add</button></div>
+              <div class="card-b" style="display:flex;flex-direction:column;gap:14px">
+                <div style="border-left:2px solid var(--color-accent-border);padding-left:12px">
+                  <div style="font-weight:600;font-size:13px;margin-bottom:3px">Kickoff summary</div>
+                  <div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.5">Client wants <b>lead routing</b> live before their Q3 push. Scope is <i>fixed</i>; timeline is the priority.</div>
+                  <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">Arjun R. · 2026-05-21</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Attachments -->
+            <div class="card">
+              <div class="card-h"><h3>Attachments</h3><span class="cnt">3 files</span><span class="cnt">2 links</span></div>
+              <div class="card-b" style="padding:8px">
+                <div class="row-item" style="padding:8px;border-top:0;border-radius:var(--radius-sm)"><i data-lucide="file-text" style="font-size:18px;color:var(--color-danger-fg)"></i><div style="flex:1"><div style="font-size:13px;font-weight:500">Acme_SOW_v3.pdf</div><div class="mono" style="font-size:10px;color:var(--color-text-muted)">PDF · 2.4 MB</div></div><i data-lucide="download" style="color:var(--color-text-tertiary)"></i></div>
+                <div class="row-item" style="padding:8px;border-top:0;border-radius:var(--radius-sm)"><i data-lucide="link" style="font-size:18px;color:var(--color-accent)"></i><div style="flex:1"><div style="font-size:13px;font-weight:500">Staging environment</div><div class="mono" style="font-size:10px;color:var(--color-text-muted)">acme-staging.app</div></div><i data-lucide="external-link" style="color:var(--color-text-tertiary)"></i></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg">Saved</span></div>
+
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script>
+const milestones = [
+  ['1','Discovery & scope','Done','done','var(--color-success-solid)'],
+  ['2','HubSpot integration','Done','done','var(--color-success-solid)'],
+  ['3','Routing rules engine','Done','done','var(--color-success-solid)'],
+  ['4','Slack notifications','In Progress','wip','var(--iris-500)'],
+  ['5','QA & edge cases','Not started','todo','var(--color-border-strong)'],
+  ['6','Client UAT','Not started','todo','var(--color-border-strong)'],
+  ['7','Go-live','Not started','todo','var(--color-border-strong)'],
+];
+const tasks = [
+  ['Wire Slack channel mapping','Neha K.','var(--green-600)',true,'Done'],
+  ['Handle duplicate-lead collision','Neha K.','var(--green-600)',false,'In Progress'],
+  ['Write routing-rule unit tests','Dev V.','var(--amber-500)',false,'Due in 2d'],
+  ['Draft UAT checklist for Acme','Priya M.','var(--sky-600)',false,'Not started'],
+];
+
+function renderMilestones(){
+  document.getElementById('msList').innerHTML = milestones.map(([n,name,st,kind,col])=>{
+    const sched = kind==='done' ? '<span class="schedule" style="background:var(--color-success-bg);color:var(--color-success-text);border:1px solid var(--color-success-border)">Delivered</span>'
+      : kind==='wip' ? '<span class="schedule" style="background:var(--color-warning-bg);color:var(--color-warning-text);border:1px solid var(--color-warning-border)">Due in 3d</span>'
+      : '<span class="status">Not started</span>';
+    return `<div class="row-item"><span class="ms-num" style="background:${kind==='done'?'var(--color-success-bg)':kind==='wip'?'var(--color-accent-subtle)':'var(--color-bg-subtle)'};color:${kind==='done'?'var(--color-success-text)':kind==='wip'?'var(--color-accent-text)':'var(--color-text-tertiary)'}">${n}</span>
+      <div style="flex:1"><div style="font-size:13.5px;font-weight:500">${name}</div></div>${sched}</div>`;
+  }).join('');
+}
+function renderTasks(){
+  document.getElementById('taskList').innerHTML = tasks.map(([name,who,col,done,st],i)=>{
+    const badge = st==='Done'?'<span class="status"><span class="dot" style="background:var(--color-success-solid)"></span>Done</span>'
+      : st==='In Progress'?'<span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span>'
+      : st.startsWith('Due')?`<span class="schedule" style="background:var(--color-warning-bg);color:var(--color-warning-text);border:1px solid var(--color-warning-border)">${st}</span>`
+      : '<span class="status">Not started</span>';
+    return `<div class="row-item"><span class="check ${done?'done':''}" data-task="${i}"><i data-lucide="check"></i></span>
+      <div style="flex:1"><div style="font-size:13.5px;font-weight:500;${done?'color:var(--color-text-tertiary);text-decoration:line-through':''}">${name}</div></div>
+      <span class="avatar" style="background:${col};width:24px;height:24px;font-size:10px;box-shadow:none" title="${who}">${who.split(' ')[0][0]+who.split(' ')[1][0]}</span>${badge}</div>`;
+  }).join('');
+}
+renderMilestones(); renderTasks();
+
+let toastT;
+function toast(msg){ const t=document.getElementById('toast'); document.getElementById('toastMsg').textContent=msg; t.classList.add('show'); clearTimeout(toastT); toastT=setTimeout(()=>t.classList.remove('show'),2200); }
+
+function icons(){ if(window.lucide) lucide.createIcons(); }
+icons();
+
+// nav collapse
+document.getElementById('navToggle').onclick = ()=> document.getElementById('app').classList.toggle('collapsed');
+
+// tabs
+document.getElementById('tabs').addEventListener('click', e=>{
+  const tab = e.target.closest('.tab'); if(!tab) return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  const id = tab.dataset.tab;
+  document.querySelectorAll('.pane').forEach(p=>p.classList.toggle('active', p.dataset.pane===id));
+});
+
+// channel chips
+document.getElementById('chips').addEventListener('click', e=>{
+  const chip = e.target.closest('.chip'); if(!chip) return;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+  chip.classList.add('active');
+});
+
+// inline edit
+document.querySelectorAll('.ie[data-ie="text"]').forEach(ie=>{
+  ie.addEventListener('click', ()=>{
+    if(ie.classList.contains('editing')) return;
+    const valEl = ie.querySelector('.ie-val');
+    const old = valEl.textContent;
+    const isMono = valEl.classList.contains('mono');
+    ie.classList.add('editing');
+    ie.innerHTML = `<input value="${old.replace(/"/g,'&quot;')}" ${isMono?'style="font-family:var(--font-mono);font-size:13px"':''}>`;
+    const inp = ie.querySelector('input'); inp.focus(); inp.select();
+    const commit = ()=>{
+      const nv = inp.value.trim() || old;
+      ie.classList.remove('editing');
+      ie.innerHTML = `<span class="ie-val ${isMono?'mono':''}" ${isMono?'style="font-size:13px"':''}>${nv}</span><span class="ie-saving"><i data-lucide="loader-circle" style="animation:spin 1s linear infinite"></i>Saving</span>`;
+      icons();
+      setTimeout(()=>{
+        ie.innerHTML = `<span class="ie-val ${isMono?'mono':''}" ${isMono?'style="font-size:13px"':''}>${nv}</span><span class="ie-saved"><i data-lucide="circle-check" class="ic-fill"></i>Saved</span>`;
+        icons();
+        setTimeout(()=>{ ie.innerHTML = `<span class="ie-val ${isMono?'mono':''}" ${isMono?'style="font-size:13px"':''}>${nv}</span><i data-lucide="pencil" class="ie-pencil"></i>`; icons(); }, 1400);
+      }, 650);
+    };
+    inp.addEventListener('blur', commit);
+    inp.addEventListener('keydown', ev=>{ if(ev.key==='Enter') inp.blur(); if(ev.key==='Escape'){ inp.value=old; inp.blur(); } });
+  });
+});
+
+// task checkboxes
+document.getElementById('taskList').addEventListener('click', e=>{
+  const c = e.target.closest('.check'); if(!c) return;
+  const i = +c.dataset.task; tasks[i][3] = !tasks[i][3];
+  if(tasks[i][3]) tasks[i][4]='Done';
+  renderTasks(); icons();
+  toast(tasks[i][3]?'Task completed':'Task reopened');
+});
+
+// AI proposal
+document.getElementById('proposal').addEventListener('click', e=>{
+  const b = e.target.closest('[data-prop]'); if(!b) return;
+  const p = document.getElementById('proposal');
+  if(b.dataset.prop==='confirm'){
+    tasks.unshift(['Send Acme the revised SOW','Neha K.','var(--green-600)',false,'Not started']);
+    renderTasks();
+    p.innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:var(--color-success-text);font-size:13px;font-weight:600"><i data-lucide="circle-check" class="ic-fill"></i>Task created for Neha K.</div>';
+    toast('Task created · assigned to Neha K.');
+  } else {
+    p.innerHTML = '<div style="display:flex;align-items:center;gap:8px;color:var(--color-text-tertiary);font-size:13px"><i data-lucide="x-circle"></i>Proposal dismissed.</div>';
+    toast('Proposal dismissed');
+  }
+  icons();
+});
+
+// composer
+function send(){
+  const inp = document.getElementById('composerInput'); const v = inp.value.trim(); if(!v) return;
+  const thread = document.getElementById('thread');
+  const now = new Date().toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+  const el = document.createElement('div'); el.className='msg-out';
+  el.innerHTML = `<div><div class="bubble-out">${v.replace(/</g,'&lt;')}</div><div class="msg-meta" style="justify-content:flex-end"><span class="dot" style="background:var(--ch-whatsapp)"></span>You · ${now} · <i data-lucide="check-check" style="color:var(--color-info-fg)"></i></div></div>`;
+  thread.appendChild(el); inp.value=''; thread.scrollTop = thread.scrollHeight; icons();
+}
+document.getElementById('sendBtn').onclick = send;
+document.getElementById('composerInput').addEventListener('keydown', e=>{ if(e.key==='Enter') send(); });
+</script>
+</body>
+</html>

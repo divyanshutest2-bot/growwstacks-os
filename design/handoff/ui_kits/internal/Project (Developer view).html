@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Project (delivery)</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .phead { display: flex; flex-direction: column; gap: 16px; margin-bottom: 18px; }
+  .ptitle-row { display: flex; align-items: flex-start; gap: 14px; }
+  .ptitle { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -.02em; line-height: 1.1; }
+  .pid { font-family: var(--font-mono); font-size: 12px; color: var(--color-text-tertiary); margin-top: 4px; }
+  .badge-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .cols { display: grid; grid-template-columns: 256px minmax(0,1fr) 312px; gap: 16px; align-items: start; margin-top: 18px; }
+  .md { font-size: 13.5px; line-height: 1.6; color: var(--color-text-secondary); }
+  .md b { color: var(--color-text-primary); }
+  .row-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-top: 1px solid var(--color-border-subtle); }
+  .row-item:first-child { border-top: 0; }
+  .row-item:hover { background: var(--color-bg-hover); }
+  .ms-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 12px; font-weight: 600; flex: none; }
+  .bar { height: 7px; border-radius: var(--radius-full); background: var(--color-bg-active); overflow: hidden; }
+  .bar > div { height: 100%; background: var(--color-accent); border-radius: var(--radius-full); }
+  .check { width: 18px; height: 18px; border-radius: var(--radius-sm); border: 1.5px solid var(--color-border-strong); display: flex; align-items: center; justify-content: center; flex: none; color: #fff; }
+  .check.done { background: var(--color-success-solid); border-color: var(--color-success-solid); }
+  .check.done i { display: block; }
+  .check i { display: none; font-size: 12px; }
+  .blocker { display: flex; gap: 11px; padding: 11px 13px; border-radius: var(--radius-md); border: 1px solid var(--color-border-subtle); }
+  .blocker .ic { width: 30px; height: 30px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex: none; }
+  .test-row { display: flex; align-items: center; gap: 10px; padding: 9px 14px; border-top: 1px solid var(--color-border-subtle); font-size: 13px; }
+  .test-row:first-child { border-top: 0; }
+  .tpass { color: var(--color-success-text); } .tfail { color: var(--color-danger-text); }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="projects" data-role="dev" data-user="Neha Kapoor" data-user-role="Developer" data-user-init="NK" data-user-color="var(--green-600)"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle" title="Collapse nav"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><a href="#">Projects</a><i data-lucide="chevron-right"></i><span class="here">Lead-routing automation</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search my work…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+
+    <div class="scroll">
+      <div class="sheet" data-screen-label="Project — Developer view">
+
+        <div class="phead">
+          <div class="ptitle-row">
+            <div>
+              <div class="ptitle">Lead-routing automation</div>
+              <div class="pid">pr-0418 · started 2026-05-01 · est. completion 2026-06-14</div>
+            </div>
+            <div class="spacer"></div>
+            <div class="badge-row">
+              <span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span>
+              <span class="schedule" style="background:var(--color-warning-bg);color:var(--color-warning-text);border:1px solid var(--color-warning-border)"><i data-lucide="clock" style="font-size:13px"></i>Due in 3d</span>
+            </div>
+          </div>
+          <!-- Stat strip: delivery only. No money, no client. -->
+          <div class="statstrip">
+            <div class="stat"><div class="k">Completion</div><div class="v" style="color:var(--color-accent-text)">64%</div><div class="s">by task count</div></div>
+            <div class="stat"><div class="k">Tasks</div><div class="v">14 / 22</div><div class="s">done</div></div>
+            <div class="stat"><div class="k">Milestones</div><div class="v">3 / 7</div><div class="s">on track</div></div>
+            <div class="stat"><div class="k">Your hours</div><div class="v">28h</div><div class="s">logged on this project</div></div>
+            <div class="stat"><div class="k">Schedule</div><div class="v" style="color:var(--color-warning-text)">3d</div><div class="s">to estimated date</div></div>
+          </div>
+        </div>
+
+        <div class="cols">
+
+          <!-- LEFT META -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Details</h3></div>
+              <div class="card-b" style="padding-top:8px">
+                <div class="meta-row"><span class="k">Project ID</span><span class="mono" style="font-size:13px;color:var(--color-text-secondary)">pr-0418</span></div>
+                <div class="meta-row"><span class="k">Project managers</span>
+                  <div class="ostack" style="margin-top:4px">
+                    <span class="wrap"><span class="avatar" style="background:var(--sky-600)">PM</span><span class="sdot" style="background:var(--color-status-active)"></span></span>
+                    <span class="wrap"><span class="avatar" style="background:var(--iris-600)">AR</span><span class="sdot" style="background:var(--color-status-active)"></span></span>
+                  </div>
+                </div>
+                <div class="meta-row"><span class="k">Start date</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">2026-05-01</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Est. completion</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">2026-06-14</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Team Logger ID</span><span class="mono" style="font-size:13px;color:var(--color-text-secondary)">TL-0418</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Tech stack</h3><button class="btn btn-ghost btn-sm more" style="padding:4px 8px"><i data-lucide="plus"></i>Add</button></div>
+              <div class="card-b"><div class="tag-row"><span class="tag">n8n</span><span class="tag">HubSpot API</span><span class="tag">Slack API</span><span class="tag">Node.js</span><span class="tag">PostgreSQL</span></div></div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Team</h3></div>
+              <div class="card-b">
+                <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:8px">Developers</div>
+                <div class="ostack" style="margin-bottom:14px">
+                  <span class="wrap"><span class="avatar" style="background:var(--green-600)">NK</span><span class="sdot" style="background:var(--color-status-active)"></span></span>
+                  <span class="wrap"><span class="avatar" style="background:var(--amber-500)">DV</span><span class="sdot" style="background:var(--color-status-away)"></span></span>
+                </div>
+                <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:8px">Project managers</div>
+                <div class="ostack">
+                  <span class="wrap"><span class="avatar" style="background:var(--sky-600)">PM</span><span class="sdot" style="background:var(--color-status-active)"></span></span>
+                  <span class="wrap"><span class="avatar" style="background:var(--iris-600)">AR</span><span class="sdot" style="background:var(--color-status-active)"></span></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Credentials</h3><span class="badge" style="background:var(--color-warning-bg);color:var(--color-warning-text);font-size:9px;border:1px solid var(--color-warning-border)"><i data-lucide="lock" style="font-size:11px"></i>Restricted</span></div>
+              <div class="card-b">
+                <div class="cred" style="margin-bottom:12px">
+                  <span class="lock"><i data-lucide="key-round"></i></span>
+                  <div style="flex:1"><div style="font-size:13px;font-weight:500">2 credentials you can access</div><div style="font-size:11px;color:var(--color-text-tertiary)">HubSpot sandbox key · staging login</div></div>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="revealCreds" style="width:100%;justify-content:center"><i data-lucide="eye"></i>Reveal & log access</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Attachments</h3><span class="cnt">3 files</span><span class="cnt">2 links</span></div>
+              <div class="card-b" style="padding:6px">
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm)"><i data-lucide="file-text" style="font-size:18px;color:var(--color-info-fg)"></i><div class="t"><div class="l1">Requirement_v3.pdf</div><div class="l2 mono">PDF · 1.1 MB</div></div><i data-lucide="download" style="color:var(--color-text-tertiary)"></i></div>
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm);border-top:0"><i data-lucide="figma" style="font-size:18px;color:var(--color-accent)"></i><div class="t"><div class="l1">Flow & states</div><div class="l2 mono">figma.com/file/…</div></div><i data-lucide="external-link" style="color:var(--color-text-tertiary)"></i></div>
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm);border-top:0"><i data-lucide="workflow" style="font-size:18px;color:var(--color-accent)"></i><div class="t"><div class="l1">n8n workflow</div><div class="l2 mono">n8n.internal/wf/418</div></div><i data-lucide="external-link" style="color:var(--color-text-tertiary)"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CENTER -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Overview</h3><i data-lucide="pencil" class="more" style="color:var(--color-text-muted);font-size:14px"></i></div>
+              <div class="card-b"><p class="md">Route inbound leads from <b>HubSpot</b> into the right <b>Slack</b> channel by territory and product line, with dedupe and a fallback owner. Built on n8n; rules are config-driven so PMs can edit territories without a deploy.</p></div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Requirement</h3><span class="cnt">2 attachments</span><i data-lucide="pencil" class="more" style="color:var(--color-text-muted);font-size:14px"></i></div>
+              <div class="card-b">
+                <p class="md" style="margin-bottom:10px">Must handle <b>duplicate leads</b> (same email within 24h → single routed record) and a <b>collision rule</b> when two reps match. Slack notification includes lead score + source. Target: live before the Q3 push.</p>
+                <div class="tag-row"><span class="tag"><i data-lucide="file-text" style="font-size:12px"></i>spec.md</span><span class="tag"><i data-lucide="image" style="font-size:12px"></i>routing-diagram.png</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><i data-lucide="octagon-alert" style="color:var(--color-warning-fg)"></i><h3>Blockers</h3><span class="cnt">2 open</span></div>
+              <div class="card-b" style="display:flex;flex-direction:column;gap:10px">
+                <div class="blocker"><span class="ic" style="background:var(--color-ai-tint)"><i data-lucide="sparkles" class="ic-fill" style="color:var(--color-accent);font-size:15px"></i></span><div><div style="font-size:13px;font-weight:600;margin-bottom:2px">Awaiting production HubSpot token <span style="font-weight:500;color:var(--color-text-tertiary)">· external dependency</span></div><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.45">6 days open. Slack-side work can continue meanwhile — only go-live is gated on this.</div></div></div>
+                <div class="blocker"><span class="ic" style="background:var(--color-warning-bg)"><i data-lucide="triangle-alert" style="color:var(--color-warning-fg);font-size:15px"></i></span><div><div style="font-size:13px;font-weight:600;margin-bottom:2px">Sandbox API rate-limit</div><div style="font-size:12px;color:var(--color-text-secondary);line-height:1.45">Raised with infra — bumped quota requested. Flagged by DV, 2 days ago.</div></div></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="tabs" id="tabs">
+                <div class="tab active" data-tab="ms"><i data-lucide="flag"></i>Milestones <span class="tc">7</span></div>
+                <div class="tab" data-tab="tasks"><i data-lucide="square-check"></i>My tasks <span class="tc">5</span></div>
+                <div class="tab" data-tab="tests"><i data-lucide="flask-conical"></i>Tests <span class="tc">9</span></div>
+              </div>
+              <div class="pane active" data-pane="ms"><div id="msList"></div></div>
+              <div class="pane" data-pane="tasks"><div id="taskList"></div></div>
+              <div class="pane" data-pane="tests"><div id="testList"></div></div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="stack">
+            <div class="card ai-card">
+              <div class="card-h" style="border-bottom:0;padding-bottom:4px"><i data-lucide="sparkles" class="ic-fill" style="color:var(--color-accent)"></i><h3>AI Supervisor</h3><span style="margin-left:auto;font-size:10px;color:var(--color-text-muted)">delivery</span></div>
+              <div class="card-b" style="padding-top:6px;display:flex;flex-direction:column;gap:8px">
+                <div class="insight"><i data-lucide="trending-up" style="color:var(--color-ai-positive)"></i><p>Milestone 2 shipped 2 days early — nice pace.</p></div>
+                <div class="insight"><i data-lucide="info" style="color:var(--color-ai-neutral)"></i><p>Your tests are mostly green — 8 of 9 passing. One copy-change retest left.</p></div>
+                <div class="insight"><i data-lucide="triangle-alert" style="color:var(--color-ai-risk)"></i><p>Milestone 4 go-live is gated on an external token — focus on Slack tasks until it lands.</p></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Completion</h3></div>
+              <div class="card-b">
+                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px"><span style="font-family:var(--font-display);font-size:36px;font-weight:800;color:var(--color-accent-text);line-height:1">64%</span><span style="font-size:13px;color:var(--color-text-tertiary);white-space:nowrap">14 / 22 tasks</span></div>
+                <div class="bar" style="margin-bottom:14px"><div style="width:64%"></div></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px;padding:5px 0;border-top:1px solid var(--color-border-subtle)"><span style="color:var(--color-text-secondary)">Milestones</span><span class="mono">3 / 7</span></div>
+                <div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:5px 0;border-top:1px solid var(--color-border-subtle)"><span style="color:var(--color-text-secondary)">Your time logged</span><span class="mono">28h</span></div>
+                <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px;line-height:1.4">Completion tracks task count. Hours are a separate effort signal.</div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Notes</h3><span class="cnt">2</span><button class="btn btn-ghost btn-sm more" style="padding:4px 8px"><i data-lucide="plus"></i>Add</button></div>
+              <div class="card-b">
+                <div style="border-left:2px solid var(--color-accent-border);padding-left:12px">
+                  <div style="font-weight:600;font-size:13px;margin-bottom:3px">Dedupe edge case</div>
+                  <div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.5">If two leads share an email but different phone, keep <b>both</b> — flag for manual merge instead of auto-dedupe.</div>
+                  <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">Neha K. · 2026-05-29</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg"></span></div>
+
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="inline-edit.js"></script>
+<script>
+// Milestones — NO price/currency (developer world)
+const milestones = [
+  ['1','Discovery & scope','done',100,'2026-05-08'],
+  ['2','HubSpot integration','done',100,'2026-05-18'],
+  ['3','Routing rules engine','done',100,'2026-05-28'],
+  ['4','Slack notifications','wip',55,'2026-06-06'],
+  ['5','QA & edge cases','todo',0,'2026-06-10'],
+  ['6','Internal UAT','todo',0,'2026-06-12'],
+  ['7','Go-live','todo',0,'2026-06-14'],
+];
+const tasks = [
+  ['Wire Slack channel mapping','done','Medium','Delivered','2026-06-02'],
+  ['Handle duplicate-lead collision','wip','High','Due in 1d','2026-06-04'],
+  ['Build fallback-owner rule','wip','Medium','Due in 2d','2026-06-05'],
+  ['Write routing-rule unit tests','todo','High','Due in 3d','2026-06-06'],
+  ['Slack message formatting + lead score','todo','Low','Due in 4d','2026-06-07'],
+];
+const tests = [
+  ['dev','Dedupe: same email < 24h → single record','pass','NK','2026-06-01'],
+  ['dev','Collision: two matching reps → fallback owner','pass','NK','2026-06-01'],
+  ['dev','Slack payload includes lead score','fail','NK','2026-06-02'],
+  ['uat','Territory routing matches the matrix','pass','PM','2026-06-02'],
+  ['uat','Notification copy reads correctly','fail','PM','2026-06-02'],
+];
+
+function msTone(k){ return k==='done' ? ['var(--color-success-bg)','var(--color-success-text)'] : k==='wip' ? ['var(--color-accent-subtle)','var(--color-accent-text)'] : ['var(--color-bg-subtle)','var(--color-text-tertiary)']; }
+function msStatus(k){ return k==='done' ? '<span class="schedule" style="background:var(--color-success-bg);color:var(--color-success-text);border:1px solid var(--color-success-border)">Done</span>' : k==='wip' ? '<span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span>' : '<span class="status">Not started</span>'; }
+
+document.getElementById('msList').innerHTML = milestones.map(function(m){
+  const tone = msTone(m[2]);
+  return '<div class="row-item"><span class="ms-num" style="background:'+tone[0]+';color:'+tone[1]+'">'+m[0]+'</span>'
+    + '<div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:500">'+m[1]+'</div>'
+    + '<div style="display:flex;align-items:center;gap:8px;margin-top:5px"><div class="bar" style="flex:1;max-width:140px"><div style="width:'+m[3]+'%"></div></div><span class="mono" style="font-size:10px;color:var(--color-text-tertiary)">'+m[3]+'%</span></div></div>'
+    + '<span class="mono" style="font-size:11px;color:var(--color-text-tertiary)">'+m[4]+'</span>'+msStatus(m[2])+'</div>';
+}).join('');
+
+function tStatus(k){ return k==='done' ? '<span class="status"><span class="dot" style="background:var(--color-success-solid)"></span>Done</span>' : k==='wip' ? '<span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span>' : '<span class="status">To-do</span>'; }
+function prio(p){ const c = p==='High'?'var(--color-danger-text)':p==='Medium'?'var(--color-warning-text)':'var(--color-text-tertiary)'; return '<span style="font-size:11px;font-weight:600;color:'+c+'">'+p+'</span>'; }
+function sched(s){ const overdue=s.indexOf('Overdue')>-1, delivered=s==='Delivered'; const bg=delivered?'var(--color-info-bg)':overdue?'var(--color-danger-bg)':'var(--color-warning-bg)'; const fg=delivered?'var(--color-info-text)':overdue?'var(--color-danger-text)':'var(--color-warning-text)'; const bd=delivered?'var(--color-info-border)':overdue?'var(--color-danger-border)':'var(--color-warning-border)'; return '<span class="schedule" style="background:'+bg+';color:'+fg+';border:1px solid '+bd+'">'+s+'</span>'; }
+
+document.getElementById('taskList').innerHTML = tasks.map(function(t){
+  return '<div class="row-item"><span class="check '+(t[1]==='done'?'done':'')+'"><i data-lucide="check"></i></span>'
+    + '<div style="flex:1;min-width:0"><div style="font-size:13.5px;font-weight:500;'+(t[1]==='done'?'color:var(--color-text-tertiary);text-decoration:line-through':'')+'">'+t[0]+'</div></div>'
+    + prio(t[2]) + tStatus(t[1]) + sched(t[3]) + '</div>';
+}).join('');
+
+document.getElementById('testList').innerHTML = '<div style="display:flex;gap:8px;padding:10px 14px;border-bottom:1px solid var(--color-border-subtle)"><span class="status">Developer tests · 2/3 pass</span><span class="status">UAT tests · 1/2 pass</span></div>' + tests.map(function(t){
+  const pass = t[2]==='pass';
+  return '<div class="test-row"><i data-lucide="'+(pass?'circle-check':'circle-x')+'" class="'+(pass?'tpass ic-fill':'tfail')+'" style="font-size:17px"></i>'
+    + '<span class="tag" style="text-transform:uppercase;font-size:9px;letter-spacing:.05em">'+(t[0]==='dev'?'DEV':'UAT')+'</span>'
+    + '<span style="flex:1;color:var(--color-text-primary)">'+t[1]+'</span>'
+    + '<span style="font-size:11px;color:var(--color-text-tertiary)">'+t[3]+' · '+t[4]+'</span></div>';
+}).join('');
+
+function icons(){ if (window.lucide) lucide.createIcons(); }
+icons(); initInlineEdit();
+document.getElementById('navToggle').onclick = function(){ document.getElementById('app').classList.toggle('collapsed'); };
+document.getElementById('tabs').addEventListener('click', function(e){
+  const tab = e.target.closest('.tab'); if (!tab) return;
+  document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+  tab.classList.add('active');
+  document.querySelectorAll('.pane').forEach(function(p){ p.classList.toggle('active', p.dataset.pane === tab.dataset.tab); });
+});
+document.getElementById('revealCreds').addEventListener('click', function(){ gsToast('Access logged · revealing credentials…'); });
+</script>
+</body>
+</html>

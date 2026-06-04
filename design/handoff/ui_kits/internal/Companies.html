@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Companies</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .seg { display: inline-flex; background: var(--color-bg-subtle); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 2px; }
+  .seg button { font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--color-text-tertiary); background: transparent; border: 0; padding: 5px 11px; border-radius: 6px; cursor: pointer; }
+  .seg button.on { background: var(--color-bg-surface); color: var(--color-text-primary); box-shadow: var(--shadow-xs); }
+  .skel { height: 13px; border-radius: 4px; background: linear-gradient(90deg, var(--color-bg-active), var(--color-bg-subtle), var(--color-bg-active)); background-size: 200% 100%; animation: shimmer 1.3s linear infinite; }
+  @keyframes shimmer { to { background-position: -200% 0; } }
+  .empty { padding: 56px 24px; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+  .logo { width: 30px; height: 30px; border-radius: var(--radius-md); display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex: none; font-family: var(--font-display); }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="companies"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle" title="Collapse nav"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><span class="here">Companies</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+
+    <div class="scroll">
+      <div class="sheet" data-screen-label="Companies — list">
+        <div class="page-h">
+          <div><h1>Companies</h1><div class="sub">8 organizations · 5 active clients</div></div>
+          <div class="spacer"></div>
+          <div class="seg" id="stateSeg">
+            <button data-state="data" class="on">Populated</button>
+            <button data-state="loading">Loading</button>
+            <button data-state="empty">Empty</button>
+          </div>
+          <button class="btn btn-primary"><i data-lucide="plus"></i>New company</button>
+        </div>
+
+        <div class="ai-strip">
+          <span class="mk"><i data-lucide="sparkles" class="ic-fill"></i></span>
+          <p><b>Brightwave Media is your highest-value account</b> — ₹68.5L lifetime, 3 active projects, all on track. Worth a quarterly check-in. <a href="Company Detail.html">Open Brightwave →</a></p>
+        </div>
+
+        <div class="filterbar" id="filterbar">
+          <div class="search-in"><i data-lucide="search" style="font-size:15px;color:var(--color-text-muted)"></i><input id="search" placeholder="Search companies…"></div>
+          <button class="fdrop" data-f="status">Status<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="owner">Owner<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="industry">Industry<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="rating">Rating<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="projects">Active projects<i data-lucide="chevron-down"></i></button>
+        </div>
+
+        <div class="tbl-wrap" id="tblWrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg"></span></div>
+
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script>
+const STATUS_DOT = { 'Active Client':'var(--iris-500)','Prospect':'var(--sky-500)','Partner':'var(--green-500)','On Hold':'var(--amber-500)','Churned':'var(--n-400)' };
+const OWN = { AR:'var(--iris-600)', PM:'var(--sky-600)', NK:'var(--green-600)', DV:'var(--amber-500)', SK:'var(--n-500)' };
+const SD = { active:'var(--color-status-active)', away:'var(--color-status-away)', left:'var(--color-status-left)' };
+const RLABEL = { great:'Great', good:'Good', average:'Average', bad:'Bad' };
+const LOGOBG = ['var(--iris-600)','var(--sky-600)','var(--green-600)','var(--amber-500)','var(--red-500)','var(--n-700)'];
+
+// id, name, mono, status, industry, owners, contacts, projects, openTasks, ltv, last, rating
+const companies = [
+  ['CO-201','Acme Robotics','AR','Active Client','Robotics',[['AR','active'],['PM','active']],4,'5 · 2 active',6,'₹42.0L','2h ago','great'],
+  ['CO-202','Brightwave Media','BM','Partner','Media & Creative',[['AR','active']],3,'9 · 3 active',5,'₹68.5L','5h ago','great'],
+  ['CO-203','Vega Logistics','VL','Prospect','Logistics',[['PM','active'],['AR','active']],2,'0 · 0 active',0,'—','1d ago','good'],
+  ['CO-204','Nimbus AI','NA','Active Client','AI / SaaS',[['NK','active'],['DV','away']],5,'3 · 1 active',2,'₹24.0L','3d ago','good'],
+  ['CO-205','Solara Health','SH','On Hold','Healthcare',[['AR','active'],['SK','left']],3,'4 · 0 active',1,'₹19.6L','21d ago','average'],
+  ['CO-206','Forge & Co','FC','Churned','Manufacturing',[['SK','left']],2,'2 · 0 active',0,'₹8.2L','64d ago','bad'],
+  ['CO-207','Helix Dynamics','HD','Active Client','Biotech',[['PM','active'],['NK','active']],6,'6 · 2 active',4,'₹55.5L','11h ago','great'],
+  ['CO-208','Tundra Retail','TR','Active Client','Retail',[['PM','active']],4,'3 · 1 active',3,'₹31.0L','1d ago','good'],
+];
+
+const wrap = document.getElementById('tblWrap');
+const HEAD = '<thead><tr><th>Company</th><th>Status</th><th>Industry</th><th>Owners</th><th class="num">Contacts</th><th>Projects</th><th class="num">Open tasks</th><th class="num">Lifetime value</th><th class="num">Last activity</th><th>Rating</th></tr></thead>';
+
+function ostack(owners){
+  return '<div class="ostack">' + owners.map(function(o){ return '<span class="wrap"><span class="avatar" style="background:' + (OWN[o[0]]||'var(--n-500)') + '">' + o[0] + '</span><span class="sdot" style="background:' + SD[o[1]] + '"></span></span>'; }).join('') + '</div>';
+}
+function rowHtml(c){
+  const lbg = LOGOBG[c[0].charCodeAt(5) % 6];
+  const tasks = c[8] > 0 ? '<span class="status" style="border-color:transparent;background:' + (c[8] > 2 ? 'var(--color-warning-bg)' : 'var(--color-bg-subtle)') + ';color:' + (c[8] > 2 ? 'var(--color-warning-text)' : 'var(--color-text-secondary)') + '">' + c[8] + '</span>' : '<span style="color:var(--color-text-muted)">0</span>';
+  const ltvColor = c[9] === '—' ? 'var(--color-text-muted)' : 'var(--color-text-primary)';
+  return '<tr data-href="Company Detail.html">'
+    + '<td><div class="cell-name"><span class="logo" style="background:' + lbg + '">' + c[2] + '</span><div><div class="nm">' + c[1] + '</div><div class="co mono" style="font-size:10px">' + c[0] + '</div></div></div></td>'
+    + '<td><span class="status"><span class="dot" style="background:' + STATUS_DOT[c[3]] + '"></span>' + c[3] + '</span></td>'
+    + '<td style="font-size:12px">' + c[4] + '</td>'
+    + '<td>' + ostack(c[5]) + '</td>'
+    + '<td class="num"><span style="display:inline-flex;align-items:center;gap:4px;font-size:12px"><i data-lucide="users" style="font-size:13px;color:var(--color-text-muted)"></i>' + c[6] + '</span></td>'
+    + '<td style="font-size:12px">' + c[7] + '</td>'
+    + '<td class="num">' + tasks + '</td>'
+    + '<td class="num mono" style="font-weight:500;color:' + ltvColor + '">' + c[9] + '</td>'
+    + '<td class="num" style="font-size:12px;color:var(--color-text-tertiary)">' + c[10] + '</td>'
+    + '<td><span class="rating ' + c[11] + '">' + RLABEL[c[11]] + '</span></td></tr>';
+}
+function skeletonRow(){
+  let s = '<tr><td><div class="cell-name"><span class="skel" style="width:30px;height:30px;border-radius:8px"></span><div><div class="skel" style="width:120px;margin-bottom:5px"></div><div class="skel" style="width:60px;height:10px"></div></div></div></td>';
+  const w = [80,90,60,40,60,24,54,50,54];
+  for (let i = 0; i < w.length; i++) s += '<td><div class="skel" style="width:' + w[i] + 'px"></div></td>';
+  return s + '</tr>';
+}
+function setState(state){
+  if (state === 'loading') { let r = ''; for (let i = 0; i < 6; i++) r += skeletonRow(); wrap.innerHTML = '<table class="tbl">' + HEAD + '<tbody>' + r + '</tbody></table>'; }
+  else if (state === 'empty') { wrap.innerHTML = '<div class="empty"><span style="width:52px;height:52px;border-radius:var(--radius-lg);background:var(--color-accent-subtle);display:flex;align-items:center;justify-content:center;margin-bottom:6px"><i data-lucide="building-2" style="font-size:26px;color:var(--color-accent)"></i></span><div style="font-weight:600;font-size:15px">No companies match these filters</div><div style="font-size:13px;color:var(--color-text-tertiary)">Try clearing a filter, or add a new organization.</div><button class="btn btn-secondary btn-sm" id="clearBtn" style="margin-top:10px"><i data-lucide="x"></i>Clear filters</button></div>'; }
+  else applySearch();
+  if (window.lucide) lucide.createIcons();
+}
+function applySearch(){
+  const q = (document.getElementById('search').value || '').toLowerCase().trim();
+  const rows = companies.filter(function(c){ return !q || c[1].toLowerCase().indexOf(q) > -1 || c[4].toLowerCase().indexOf(q) > -1; });
+  if (rows.length === 0) { setState('empty'); return; }
+  wrap.innerHTML = '<table class="tbl">' + HEAD + '<tbody>' + rows.map(rowHtml).join('') + '</tbody></table>';
+  if (window.lucide) lucide.createIcons();
+}
+function activeState(){ return document.querySelector('#stateSeg .on').dataset.state; }
+function gotoState(name){ document.querySelectorAll('#stateSeg button').forEach(function(x){ x.classList.remove('on'); }); document.querySelector('#stateSeg [data-state="' + name + '"]').classList.add('on'); setState(name); }
+
+document.getElementById('stateSeg').addEventListener('click', function(e){ const b = e.target.closest('button'); if (b) gotoState(b.dataset.state); });
+document.getElementById('search').addEventListener('input', function(){ if (activeState() === 'data') applySearch(); });
+document.getElementById('filterbar').addEventListener('click', function(e){ const b = e.target.closest('.fdrop'); if (b) b.classList.toggle('on'); });
+document.getElementById('navToggle').onclick = function(){ document.getElementById('app').classList.toggle('collapsed'); };
+wrap.addEventListener('click', function(e){
+  const tr = e.target.closest('tr[data-href]'); if (tr) { location.href = tr.dataset.href; return; }
+  if (e.target.closest('#clearBtn')) { document.getElementById('search').value = ''; gotoState('data'); }
+});
+
+if (window.lucide) lucide.createIcons();
+setState('loading');
+setTimeout(function(){ gotoState('data'); }, 600);
+</script>
+</body>
+</html>

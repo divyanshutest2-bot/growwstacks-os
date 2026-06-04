@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Deals</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .seg { display: inline-flex; background: var(--color-bg-subtle); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); padding: 2px; }
+  .seg button { font-family: var(--font-sans); font-size: 12px; font-weight: 600; color: var(--color-text-tertiary); background: transparent; border: 0; padding: 6px 12px; border-radius: 6px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+  .seg button.on { background: var(--color-bg-surface); color: var(--color-text-primary); box-shadow: var(--shadow-xs); }
+
+  .board { display: flex; gap: 14px; overflow-x: auto; padding-bottom: 10px; align-items: flex-start; }
+  .col { width: 272px; flex: none; background: var(--color-bg-subtle); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); display: flex; flex-direction: column; max-height: calc(100vh - 250px); }
+  .col-h { padding: 11px 13px; display: flex; align-items: center; gap: 8px; border-bottom: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+  .col-h .ct { font-size: 13px; font-weight: 700; }
+  .col-h .cc { font-family: var(--font-mono); font-size: 10px; color: var(--color-text-tertiary); background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-full); padding: 1px 7px; }
+  .col-h .cv { margin-left: auto; font-family: var(--font-mono); font-size: 12px; font-weight: 600; color: var(--color-text-secondary); }
+  .col.won .col-h { background: var(--color-success-bg); }
+  .col.won .col-h .ct { color: var(--color-success-text); }
+  .col.lost .col-h { background: var(--color-bg-sunken); }
+  .col.lost .col-h .ct { color: var(--color-text-tertiary); }
+  .col-cards { padding: 10px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; flex: 1; min-height: 70px; transition: background var(--dur-fast); border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+  .col.drop .col-cards { background: var(--color-accent-subtle); box-shadow: inset 0 0 0 2px var(--color-accent-border); }
+  .col.lost .deal-card { opacity: .72; }
+
+  .deal-card { background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); box-shadow: var(--shadow-xs); padding: 12px; cursor: grab; transition: box-shadow var(--dur-fast), transform var(--dur-fast); }
+  .deal-card:hover { box-shadow: var(--shadow-sm); }
+  .deal-card:active { cursor: grabbing; }
+  .deal-card.dragging { opacity: .4; }
+  .deal-card .dn { font-size: 13.5px; font-weight: 600; color: var(--color-text-primary); line-height: 1.3; }
+  .deal-card .dco { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; display: flex; align-items: center; gap: 4px; }
+  .deal-card .dval { font-family: var(--font-mono); font-size: 15px; font-weight: 600; margin-top: 9px; }
+  .deal-card .dfoot { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .deal-card .dclose { font-size: 10px; color: var(--color-text-tertiary); display: inline-flex; align-items: center; gap: 4px; }
+  .deal-card .dage { font-size: 9px; padding: 1px 6px; border-radius: var(--radius-full); margin-left: auto; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="deals"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle" title="Collapse nav"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><span class="here">Deals</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+
+    <div class="scroll">
+      <div class="sheet" style="max-width:1320px" data-screen-label="Deals — board">
+        <div class="page-h">
+          <div><h1>Deals</h1><div class="sub" id="pipelineSub">12 open · ₹64.0L weighted pipeline</div></div>
+          <div class="spacer"></div>
+          <div class="seg" id="viewSeg">
+            <button data-view="board" class="on"><i data-lucide="kanban" style="font-size:14px"></i>Board</button>
+            <button data-view="list"><i data-lucide="list" style="font-size:14px"></i>List</button>
+          </div>
+          <button class="btn btn-primary"><i data-lucide="plus"></i>New deal</button>
+        </div>
+
+        <div class="ai-strip">
+          <span class="mk"><i data-lucide="sparkles" class="ic-fill"></i></span>
+          <p><b>2 deals in Negotiation have had no activity in 10+ days</b> — Vega Logistics and Helix Dynamics. A nudge now keeps momentum. <a href="Deal Detail.html">Open Vega →</a></p>
+        </div>
+
+        <div class="filterbar" id="filterbar">
+          <div class="search-in"><i data-lucide="search" style="font-size:15px;color:var(--color-text-muted)"></i><input id="search" placeholder="Search deals…"></div>
+          <button class="fdrop" data-f="owner">Owner<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="value">Value range<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="stage">Stage<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="close">Expected close<i data-lucide="chevron-down"></i></button>
+        </div>
+
+        <div id="boardView"><div class="board" id="board"></div></div>
+        <div id="listView" style="display:none"><div class="tbl-wrap" id="tblWrap"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg"></span></div>
+
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="inline-edit.js"></script>
+<script>
+const STAGES = [
+  ['lead','Lead','var(--n-400)'], ['qualified','Qualified','var(--sky-500)'], ['proposal','Proposal Sent','var(--iris-500)'],
+  ['negotiation','Negotiation','var(--amber-500)'], ['won','Won','var(--green-500)'], ['lost','Lost','var(--red-500)']
+];
+const OWN = { AR:'var(--iris-600)', PM:'var(--sky-600)', NK:'var(--green-600)', DV:'var(--amber-500)', SK:'var(--n-500)' };
+const PROB = { lead:10, qualified:30, proposal:55, negotiation:75, won:100, lost:0 };
+
+// id, name, who, value(₹), stage, owners, close, ageDays, lastActivity
+let deals = [
+  ['DL-101','Annual retainer','Acme Robotics',1800000,'won',['AR','PM'],'2026-05-30',2,'2d ago'],
+  ['DL-102','Lead-routing expansion','Acme Robotics',640000,'proposal',['AR'],'2026-06-20',5,'5h ago'],
+  ['DL-103','Logistics automation','Vega Logistics',1240000,'negotiation',['PM','AR'],'2026-06-15',11,'11d ago'],
+  ['DL-104','Content pipeline build','Brightwave Media',2200000,'qualified',['AR'],'2026-07-02',3,'1d ago'],
+  ['DL-105','Support copilot','Nimbus AI',980000,'proposal',['NK'],'2026-06-28',6,'3d ago'],
+  ['DL-106','Onboarding revamp','Helix Dynamics',1560000,'negotiation',['PM','NK'],'2026-06-18',12,'12d ago'],
+  ['DL-107','Discovery sprint','Tundra Retail',300000,'lead',['PM'],'2026-07-10',1,'4h ago'],
+  ['DL-108','Data cleanup','Solara Health',450000,'lead',['AR'],'2026-07-14',8,'8d ago'],
+  ['DL-109','Inventory sync','Forge & Co',520000,'lost',['SK'],'2026-05-10',40,'40d ago'],
+  ['DL-110','Slack ops bot','Brightwave Media',720000,'qualified',['AR'],'2026-07-05',2,'2d ago'],
+];
+
+function fmt(v){ if (v >= 100000) return '₹' + (v/100000).toFixed(1) + 'L'; return '₹' + (v/1000).toFixed(0) + 'K'; }
+function owners(list){ return '<div class="ostack">' + list.map(function(o){ return '<span class="wrap"><span class="avatar" style="background:' + (OWN[o]||'var(--n-500)') + ';width:24px;height:24px;font-size:9px">' + o + '</span></span>'; }).join('') + '</div>'; }
+
+function ageChip(d){
+  const stale = d[7] >= 10 && d[4] !== 'won' && d[4] !== 'lost';
+  return '<span class="dage" style="background:' + (stale ? 'var(--color-warning-bg)' : 'var(--color-bg-subtle)') + ';color:' + (stale ? 'var(--color-warning-text)' : 'var(--color-text-muted)') + '">' + (stale ? '⏳ ' : '') + d[8] + '</span>';
+}
+
+function renderBoard(){
+  const board = document.getElementById('board');
+  board.innerHTML = STAGES.map(function(s){
+    const items = deals.filter(function(d){ return d[4] === s[0]; });
+    const sum = items.reduce(function(a, d){ return a + d[3]; }, 0);
+    const cards = items.map(function(d){
+      return '<div class="deal-card" draggable="true" data-id="' + d[0] + '" data-href="Deal Detail.html">'
+        + '<div class="dn">' + d[1] + '</div>'
+        + '<div class="dco"><i data-lucide="building-2" style="font-size:11px"></i>' + d[2] + '</div>'
+        + '<div class="dval">' + fmt(d[3]) + '</div>'
+        + '<div class="dfoot"><span class="dclose"><i data-lucide="calendar" style="font-size:12px"></i>' + d[6].slice(5) + '</span>' + owners(d[5]) + ageChip(d) + '</div>'
+        + '</div>';
+    }).join('') || '<div style="font-size:11px;color:var(--color-text-muted);text-align:center;padding:14px 0">Drop deals here</div>';
+    return '<div class="col ' + s[0] + '" data-stage="' + s[0] + '">'
+      + '<div class="col-h"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:' + s[2] + '"></span><span class="ct">' + s[1] + '</span><span class="cc">' + items.length + '</span><span class="cv">' + (sum ? fmt(sum) : '—') + '</span></div>'
+      + '<div class="col-cards" data-stage="' + s[0] + '">' + cards + '</div></div>';
+  }).join('');
+  wireDrag();
+  if (window.lucide) lucide.createIcons();
+}
+
+let dragId = null;
+function wireDrag(){
+  document.querySelectorAll('.deal-card').forEach(function(card){
+    card.addEventListener('dragstart', function(e){ dragId = card.dataset.id; card.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    card.addEventListener('dragend', function(){ card.classList.remove('dragging'); document.querySelectorAll('.col').forEach(function(c){ c.classList.remove('drop'); }); });
+    card.addEventListener('click', function(){ if (!card.classList.contains('dragging')) location.href = card.dataset.href; });
+  });
+  document.querySelectorAll('.col').forEach(function(col){
+    const zone = col.querySelector('.col-cards');
+    col.addEventListener('dragover', function(e){ e.preventDefault(); col.classList.add('drop'); });
+    col.addEventListener('dragleave', function(e){ if (!col.contains(e.relatedTarget)) col.classList.remove('drop'); });
+    col.addEventListener('drop', function(e){
+      e.preventDefault();
+      const newStage = col.dataset.stage;
+      const d = deals.find(function(x){ return x[0] === dragId; });
+      if (d && d[4] !== newStage) {
+        d[4] = newStage; d[8] = 'just now'; d[7] = 0;
+        const label = STAGES.find(function(s){ return s[0] === newStage; })[1];
+        renderBoard(); updateSub();
+        gsToast('Stage updated · ' + label + (newStage === 'won' ? ' 🎉' : ''));
+      } else { renderBoard(); }
+    });
+  });
+}
+
+function stageBadge(st){ const s = STAGES.find(function(x){ return x[0] === st; }); return '<span class="status"><span class="dot" style="background:' + s[2] + '"></span>' + s[1] + '</span>'; }
+function renderList(){
+  const HEAD = '<thead><tr><th>Deal</th><th>Stage</th><th class="num">Value</th><th>Owners</th><th class="num">Expected close</th><th class="num">Weighted</th><th class="num">Last activity</th></tr></thead>';
+  const rows = deals.map(function(d){
+    const weighted = d[3] * PROB[d[4]] / 100;
+    return '<tr data-href="Deal Detail.html"><td><div class="cell-name"><div><div class="nm">' + d[1] + '</div><div class="co">' + d[2] + '</div></div></div></td>'
+      + '<td>' + stageBadge(d[4]) + '</td>'
+      + '<td class="num mono" style="font-weight:600">' + fmt(d[3]) + '</td>'
+      + '<td>' + owners(d[5]) + '</td>'
+      + '<td class="num mono" style="font-size:12px;color:var(--color-text-secondary)">' + d[6] + '</td>'
+      + '<td class="num mono" style="font-size:12px;color:var(--color-text-tertiary)">' + (weighted ? fmt(weighted) : '—') + '</td>'
+      + '<td class="num" style="font-size:12px;color:var(--color-text-tertiary)">' + d[8] + '</td></tr>';
+  }).join('');
+  document.getElementById('tblWrap').innerHTML = '<table class="tbl">' + HEAD + '<tbody>' + rows + '</tbody></table>';
+}
+
+function updateSub(){
+  const open = deals.filter(function(d){ return d[4] !== 'won' && d[4] !== 'lost'; });
+  const weighted = open.reduce(function(a, d){ return a + d[3] * PROB[d[4]] / 100; }, 0);
+  document.getElementById('pipelineSub').textContent = open.length + ' open · ' + fmt(weighted) + ' weighted pipeline';
+}
+
+document.getElementById('viewSeg').addEventListener('click', function(e){
+  const b = e.target.closest('button'); if (!b) return;
+  this.querySelectorAll('button').forEach(function(x){ x.classList.remove('on'); }); b.classList.add('on');
+  const board = b.dataset.view === 'board';
+  document.getElementById('boardView').style.display = board ? '' : 'none';
+  document.getElementById('listView').style.display = board ? 'none' : '';
+  if (!board) renderList();
+  if (window.lucide) lucide.createIcons();
+});
+document.getElementById('tblWrap').addEventListener('click', function(e){ const tr = e.target.closest('tr[data-href]'); if (tr) location.href = tr.dataset.href; });
+document.getElementById('filterbar').addEventListener('click', function(e){ const b = e.target.closest('.fdrop'); if (b) b.classList.toggle('on'); });
+document.getElementById('navToggle').onclick = function(){ document.getElementById('app').classList.toggle('collapsed'); };
+
+renderBoard(); updateSub();
+if (window.lucide) lucide.createIcons();
+</script>
+</body>
+</html>

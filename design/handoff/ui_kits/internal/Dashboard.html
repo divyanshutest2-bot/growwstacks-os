@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Dashboard</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .greet { margin-bottom: 18px; }
+  .greet h1 { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+  .digest { display: flex; gap: 12px; align-items: flex-start; background: linear-gradient(100deg, var(--color-ai-tint), transparent 80%); border: 1px solid var(--color-accent-border); border-radius: var(--radius-lg); padding: 13px 16px; margin-top: 12px; }
+  .digest .mk { width: 28px; height: 28px; border-radius: var(--radius-md); background: var(--color-accent-subtle); display: flex; align-items: center; justify-content: center; flex: none; }
+  .digest .mk i { color: var(--color-accent); font-size: 16px; }
+  .digest p { font-size: 13.5px; line-height: 1.5; color: var(--color-text-primary); }
+  .digest b { font-weight: 600; }
+
+  .metrics { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+  .metric { background: var(--color-bg-surface); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); padding: 15px 18px; }
+  .metric .k { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-tertiary); }
+  .metric .v { font-family: var(--font-mono); font-size: 26px; font-weight: 600; line-height: 1.1; margin-top: 5px; }
+  .metric .s { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+
+  .cols { display: grid; grid-template-columns: minmax(0,1fr) 320px; gap: 16px; align-items: start; }
+
+  .q-item { display: flex; gap: 13px; padding: 16px; border-top: 1px solid var(--color-border-subtle); transition: opacity var(--dur-base) var(--ease-standard); }
+  .q-item:first-child { border-top: 0; }
+  .q-ic { width: 36px; height: 36px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex: none; }
+  .q-main { flex: 1; min-width: 0; }
+  .q-head { display: flex; align-items: flex-start; gap: 10px; }
+  .q-title { font-size: 14px; font-weight: 600; color: var(--color-text-primary); flex: 1; min-width: 0; line-height: 1.4; }
+  .q-meta { margin-top: 7px; }
+  .q-entity { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 10px; font-weight: 500; padding: 2px 7px; border-radius: var(--radius-sm); background: var(--color-bg-subtle); color: var(--color-text-secondary); border: 1px solid var(--color-border-subtle); white-space: nowrap; }
+  .q-prio { font-size: 10px; font-weight: 600; letter-spacing: .03em; padding: 3px 9px; border-radius: var(--radius-full); flex: none; white-space: nowrap; margin-top: 1px; }
+  .q-ev { display: flex; gap: 7px; font-size: 12.5px; color: var(--color-text-secondary); line-height: 1.45; margin-top: 7px; }
+  .q-ev i { color: var(--color-text-muted); flex: none; margin-top: 2px; }
+  .q-actions { display: flex; align-items: center; gap: 8px; margin-top: 11px; }
+  .q-resolved { display: flex; align-items: center; gap: 9px; padding: 14px 16px; border-top: 1px solid var(--color-border-subtle); font-size: 13px; color: var(--color-text-secondary); }
+  .q-resolved:first-child { border-top: 0; }
+  .q-resolved .undo { margin-left: auto; }
+
+  .handled-strip .card-b { padding: 0; }
+  .handled-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--color-border-subtle); font-size: 12.5px; color: var(--color-text-tertiary); }
+  .handled-row:first-child { border-top: 0; }
+  .handled-row i.lead { color: var(--color-success-fg); flex: none; }
+  .handled-row .undo { margin-left: auto; font-size: 11px; font-weight: 600; color: var(--color-text-link); cursor: pointer; }
+
+  .mini-row { display: flex; align-items: center; gap: 11px; padding: 11px 0; border-top: 1px solid var(--color-border-subtle); cursor: pointer; text-decoration: none; }
+  .mini-row:first-child { border-top: 0; }
+  .mini-row .mi { width: 30px; height: 30px; border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; flex: none; }
+  .mini-row .ml { flex: 1; font-size: 13px; color: var(--color-text-primary); font-weight: 500; }
+  .mini-row .mc { font-family: var(--font-mono); font-size: 14px; font-weight: 600; }
+  .blocker-row { display: flex; gap: 10px; padding: 11px 0; border-top: 1px solid var(--color-border-subtle); }
+  .blocker-row:first-child { border-top: 0; }
+  .blocker-row .bt { font-size: 13px; font-weight: 500; color: var(--color-text-primary); line-height: 1.35; }
+  .blocker-row .bs { font-size: 11px; color: var(--color-text-tertiary); margin-top: 2px; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="dashboard"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle" title="Collapse nav"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><span class="here">Dashboard</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+
+    <div class="scroll">
+      <div class="sheet" data-screen-label="Dashboard — AI attention queue">
+
+        <!-- Greeting + AI digest -->
+        <div class="greet">
+          <h1>Good morning, Arjun</h1>
+          <div class="digest">
+            <span class="mk"><i data-lucide="sparkles" class="ic-fill"></i></span>
+            <p><b>7 things need you this morning</b> — mostly quick confirmations. Cash and delivery are healthy overall; one payment and one quiet client are worth a nudge today. I've already handled 4 low-risk items for you.</p>
+          </div>
+        </div>
+
+        <!-- Quiet metrics -->
+        <div class="metrics">
+          <div class="metric"><div class="k">Active projects</div><div class="v">12</div><div class="s">2 at risk</div></div>
+          <div class="metric"><div class="k">Open deals</div><div class="v">8</div><div class="s">₹64L pipeline</div></div>
+          <div class="metric"><div class="k">Outstanding</div><div class="v" style="color:var(--color-warning-text)">₹23.8L</div><div class="s">1 overdue</div></div>
+          <div class="metric"><div class="k">Due today</div><div class="v">5</div><div class="s">tasks across 4 projects</div></div>
+        </div>
+
+        <div class="cols">
+
+          <!-- AI ATTENTION QUEUE -->
+          <div class="stack">
+            <div class="card ai-card">
+              <div class="card-h" style="background:transparent"><i data-lucide="sparkles" class="ic-fill" style="color:var(--color-accent)"></i><h3>Needs you</h3><span class="cnt" id="queueCount">7</span><span style="margin-left:auto;font-size:11px;color:var(--color-text-tertiary)">AI proposes · you decide</span></div>
+              <div id="queue"></div>
+            </div>
+
+            <div class="card handled-strip">
+              <div class="card-h"><i data-lucide="circle-check" class="ic-fill" style="color:var(--color-success-fg)"></i><h3>Already handled</h3><span class="cnt">4</span><span style="margin-left:auto;font-size:11px;color:var(--color-text-tertiary)">low-risk · auto-applied · reversible</span></div>
+              <div class="card-b">
+                <div class="handled-row"><i data-lucide="circle-check" class="ic-fill lead"></i>Logged 2 payments as received — matched to bank statement.<span class="undo">Undo</span></div>
+                <div class="handled-row"><i data-lucide="circle-check" class="ic-fill lead"></i>Synced 6 new messages to Ravi Menon's timeline.<span class="undo">Undo</span></div>
+                <div class="handled-row"><i data-lucide="circle-check" class="ic-fill lead"></i>Tagged 3 new leads with source "Webinar".<span class="undo">Undo</span></div>
+                <div class="handled-row"><i data-lucide="circle-check" class="ic-fill lead"></i>Reminded 2 developers of tasks due today.<span class="undo">Undo</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- SUPPORTING -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Today</h3></div>
+              <div class="card-b" style="padding:6px 16px">
+                <a class="mini-row" href="Tasks.html"><span class="mi" style="background:var(--color-bg-subtle)"><i data-lucide="square-check" style="color:var(--color-text-tertiary)"></i></span><span class="ml">Tasks due today</span><span class="mc">5</span><i data-lucide="chevron-right" style="color:var(--color-text-muted)"></i></a>
+                <a class="mini-row" href="Tasks.html"><span class="mi" style="background:var(--color-danger-bg)"><i data-lucide="triangle-alert" style="color:var(--color-danger-fg)"></i></span><span class="ml">Overdue items</span><span class="mc" style="color:var(--color-danger-text)">3</span><i data-lucide="chevron-right" style="color:var(--color-text-muted)"></i></a>
+                <a class="mini-row" href="Milestones.html"><span class="mi" style="background:var(--color-warning-bg)"><i data-lucide="flag" style="color:var(--color-warning-fg)"></i></span><span class="ml">Milestones due this week</span><span class="mc">2</span><i data-lucide="chevron-right" style="color:var(--color-text-muted)"></i></a>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><i data-lucide="octagon-alert" style="color:var(--color-warning-fg)"></i><h3>Active blockers</h3><span class="cnt">3</span></div>
+              <div class="card-b" style="padding:6px 16px">
+                <div class="blocker-row"><span style="width:7px;height:7px;border-radius:50%;background:var(--color-tl-blocked);margin-top:6px;flex:none"></span><div><div class="bt">Awaiting production HubSpot token</div><div class="bs">Lead-routing automation · external · 6d</div></div></div>
+                <div class="blocker-row"><span style="width:7px;height:7px;border-radius:50%;background:var(--color-tl-waiting);margin-top:6px;flex:none"></span><div><div class="bt">Payment 2 overdue while work continues</div><div class="bs">Acme retainer · 5d</div></div></div>
+                <div class="blocker-row"><span style="width:7px;height:7px;border-radius:50%;background:var(--color-tl-waiting);margin-top:6px;flex:none"></span><div><div class="bt">QA backlog forming</div><div class="bs">Onboarding chatbot · 3 tasks</div></div></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Delivery health</h3></div>
+              <div class="card-b">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--color-success-text)">10</span><span style="font-size:13px;color:var(--color-text-secondary)">on track</span><span style="margin-left:auto;font-family:var(--font-display);font-size:24px;font-weight:700;color:var(--color-warning-text)">2</span><span style="font-size:13px;color:var(--color-text-secondary)">at risk</span></div>
+                <div style="display:flex;height:8px;border-radius:var(--radius-full);overflow:hidden;gap:2px"><div style="width:83%;background:var(--color-success-solid)"></div><div style="width:17%;background:var(--color-warning-solid)"></div></div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg"></span></div>
+
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="inline-edit.js"></script>
+<script>
+// AI attention queue — each item is a proposal with evidence; human confirms/dismisses/edits.
+const PRIO = {
+  high:   { bg: 'var(--color-warning-bg)', fg: 'var(--color-warning-text)', label: 'Worth a nudge' },
+  medium: { bg: 'var(--color-info-bg)',    fg: 'var(--color-info-text)',    label: 'Review' },
+  low:    { bg: 'var(--color-bg-subtle)',  fg: 'var(--color-text-tertiary)',label: 'When you can' }
+};
+const queue = [
+  { id:'q1', icon:'receipt', iconBg:'var(--color-warning-bg)', iconFg:'var(--color-warning-fg)', prio:'high',
+    title:'Payment is 9 days overdue — draft a follow-up?', entity:'PMT-0007', entityHref:'Payments.html',
+    ev:'Invoice sent 23 May, due 28 May. No reply on the last 2 nudges. Client (Acme) usually pays on time.',
+    confirm:'Draft follow-up' },
+  { id:'q2', icon:'pause', iconBg:'var(--color-warning-bg)', iconFg:'var(--color-warning-fg)', prio:'high',
+    title:'Milestone has had no task movement in 6 days — flag as stalled?', entity:'M2 · Acme',
+    ev:'No status changes, commits, or time logged since 28 May. Two tasks still "In Progress".',
+    confirm:'Flag stalled' },
+  { id:'q3', icon:'message-circle-off', iconBg:'var(--color-info-bg)', iconFg:'var(--color-info-fg)', prio:'medium',
+    title:'Client went quiet for 4 days — surface as a blocker?', entity:'Lead-routing',
+    ev:'Last reply 29 May confirming scope. Milestone 4 needs their go-ahead to start notifications.',
+    confirm:'Surface blocker' },
+  { id:'q4', icon:'square-check', iconBg:'var(--color-accent-subtle)', iconFg:'var(--color-accent)', prio:'medium',
+    title:'Create a task from a client message — review & create?', entity:'Ravi Menon',
+    ev:'WhatsApp, 2d ago: "Can we also route by product line?" — no matching task exists yet.',
+    confirm:'Review & create' },
+  { id:'q5', icon:'star', iconBg:'var(--color-accent-subtle)', iconFg:'var(--color-accent)', prio:'low',
+    title:'I rated 3 completed tasks — review before they apply?', entity:'3 tasks',
+    ev:'Based on tests passed, rework, and on-time delivery. Ratings are held until you confirm.',
+    confirm:'Review ratings' },
+  { id:'q6', icon:'user-plus', iconBg:'var(--color-accent-subtle)', iconFg:'var(--color-accent)', prio:'low',
+    title:'Two developers have capacity and asked for more — rebalance?', entity:'Team',
+    ev:'Neha K. and Dev V. are under target hours this week and flagged "want more work".',
+    confirm:'View suggestions' }
+];
+
+const queueEl = document.getElementById('queue');
+function render(){
+  queueEl.innerHTML = queue.map(function(q){
+    const p = PRIO[q.prio];
+    return '<div class="q-item" data-id="' + q.id + '">'
+      + '<span class="q-ic" style="background:' + q.iconBg + '"><i data-lucide="' + q.icon + '" style="color:' + q.iconFg + '"></i></span>'
+      + '<div class="q-main">'
+        + '<div class="q-head"><span class="q-title">' + q.title + '</span>'
+        + '<span class="q-prio" style="background:' + p.bg + ';color:' + p.fg + '">' + p.label + '</span></div>'
+        + '<div class="q-meta"><a class="q-entity" href="' + (q.entityHref || '#') + '">' + q.entity + '</a></div>'
+        + '<div class="q-ev"><i data-lucide="quote" style="font-size:13px"></i><span>' + q.ev + '</span></div>'
+        + '<div class="q-actions"><button class="btn btn-primary btn-sm" data-act="confirm"><i data-lucide="check"></i>' + q.confirm + '</button>'
+        + '<button class="btn btn-secondary btn-sm" data-act="dismiss">Dismiss</button>'
+        + '<button class="btn btn-ghost btn-sm" data-act="edit" style="margin-left:auto"><i data-lucide="pencil"></i>Edit</button></div>'
+      + '</div></div>';
+  }).join('');
+  document.getElementById('queueCount').textContent = queue.length;
+  if (window.lucide) lucide.createIcons();
+}
+render();
+
+queueEl.addEventListener('click', function(e){
+  const btn = e.target.closest('[data-act]'); if (!btn) return;
+  const item = btn.closest('.q-item'); const id = item.dataset.id;
+  const q = queue.find(function(x){ return x.id === id; });
+  const act = btn.dataset.act;
+  if (act === 'edit') { gsToast('Opening ' + q.entity + ' to edit…'); return; }
+  if (act === 'dismiss') {
+    item.style.opacity = '0';
+    setTimeout(function(){ queue.splice(queue.indexOf(q), 1); render(); }, 200);
+    gsToast('Dismissed'); return;
+  }
+  // confirm — show calm resolved state, then remove
+  item.outerHTML = '<div class="q-resolved" data-id="' + id + '"><i data-lucide="circle-check" class="ic-fill" style="color:var(--color-success-fg)"></i><span><b>' + q.confirm + '</b> · ' + q.entity + '</span><a class="undo btn btn-ghost btn-sm" data-undo="' + id + '">Undo</a></div>';
+  if (window.lucide) lucide.createIcons();
+  gsToast(q.confirm + ' · done');
+  setTimeout(function(){
+    const r = queueEl.querySelector('[data-id="' + id + '"]');
+    if (r && r.classList.contains('q-resolved')) { queue.splice(queue.indexOf(q), 1); render(); }
+  }, 2600);
+  queueEl.querySelector('[data-undo="' + id + '"]').addEventListener('click', function(ev){
+    ev.stopPropagation(); render(); gsToast('Reverted');
+  });
+});
+
+if (window.lucide) lucide.createIcons();
+document.getElementById('navToggle').onclick = function(){ document.getElementById('app').classList.toggle('collapsed'); };
+</script>
+</body>
+</html>

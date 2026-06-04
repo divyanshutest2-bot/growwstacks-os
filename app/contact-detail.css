@@ -1,0 +1,74 @@
+/* app/contact-detail.css — page-specific rules for the Contact Detail cockpit.
+   Ported verbatim from design/handoff/ui_kits/internal/Contact Detail.html's
+   <style> block, plus the helper classes used inline in that prototype
+   (.schedule, .check, .ms-num). Tokens-only: every color is a var(); plain px
+   metrics are kept as-is (the tokens-only check only flags raw hex and Tailwind
+   [NNpx] arbitrary values, never bare CSS px). */
+
+.detail-head { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+.dh-main { min-width: 0; }
+.dh-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.dh-title-row h1 { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+/* Name wrapper holds the inline-editable H1; it must size to its content (not
+   stretch) so the status + rating pills sit tight beside the name, reading as one
+   group with the ~12px .dh-title-row gap. */
+.dh-name { min-width: 0; display: inline-flex; align-items: center; }
+.dh-sub { font-size: 13px; color: var(--color-text-tertiary); margin-top: 5px; }
+.dh-sub a { font-weight: 500; }
+.dh-ltv { text-align: right; padding: 8px 18px; border-left: 1px solid var(--color-border-subtle); }
+.dh-ltv .k { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-tertiary); }
+.dh-ltv .v { font-family: var(--font-mono); font-size: 26px; font-weight: 600; color: var(--color-text-primary); line-height: 1.1; }
+
+.statuspill { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: var(--radius-full); border: 1px solid var(--color-border-default); background: var(--color-bg-surface); cursor: pointer; transition: border-color var(--dur-fast); white-space: nowrap; }
+.statuspill:hover { border-color: var(--color-border-strong); }
+.statuspill .dot { width: 7px; height: 7px; border-radius: 50%; }
+.statuspill i, .statuspill svg { font-size: 13px; color: var(--color-text-muted); }
+
+.menu { position: absolute; z-index: 40; background: var(--color-bg-surface-raised); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); padding: 5px; min-width: 180px; }
+.menu button { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; font-family: var(--font-sans); font-size: 13px; color: var(--color-text-primary); background: transparent; border: 0; padding: 7px 9px; border-radius: var(--radius-sm); cursor: pointer; }
+.menu button:hover { background: var(--color-bg-hover); }
+.menu .dot { width: 7px; height: 7px; border-radius: 50%; }
+
+.dgrid { display: grid; grid-template-columns: 270px minmax(0, 1fr) 326px; gap: 16px; align-items: start; }
+.conv-card { display: flex; flex-direction: column; height: calc(100vh - 230px); min-height: 560px; }
+.conv-card .thread { flex: 1; }
+.multi { display: flex; align-items: center; }
+.multi .add { width: 26px; height: 26px; border-radius: 50%; border: 1px dashed var(--color-border-strong); display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-muted); cursor: pointer; }
+.multi .add:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+/* Helper classes used inline in the prototype markup, lifted to real rules so the
+   React components stay declarative (no inline style soup). */
+.schedule { display: inline-flex; align-items: center; gap: 5px; font-size: var(--font-size-xs); font-weight: 600; padding: 3px 9px; border-radius: var(--radius-sm); white-space: nowrap; }
+.check { width: 16px; height: 16px; border: 1.5px solid var(--color-border-strong); border-radius: 4px; flex: none; }
+.ms-num { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 11px; font-weight: 600; flex: none; }
+
+/* Owner-stack add button (the dashed circle next to the avatar stack). The
+   prototype reuses .multi .add but the lead-source row uses a smaller .add. */
+.tag-row .add { width: 22px; height: 22px; border-radius: 50%; border: 1px dashed var(--color-border-strong); display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-muted); cursor: pointer; }
+.tag-row .add:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+/* "View all" header affordance — the .more link in summary-card headers
+   (Projects, Deals). .more already right-aligns (margin-left:auto in the shell);
+   .more-link gives it the design's accent link treatment. */
+.more-link { font-size: 12px; font-weight: 600; color: var(--color-accent-text); text-decoration: none; white-space: nowrap; }
+.more-link:hover { text-decoration: underline; }
+
+/* Attachments add-control — the dashed "Drop file · + link" affordance at the
+   bottom of the Attachments card, plus the inline add-link form it expands to. */
+.attach-drop { display: flex; align-items: center; justify-content: center; gap: 6px; width: calc(100% - 16px); margin: 6px 8px 4px; padding: 9px; border: 1.5px dashed var(--color-border-default); border-radius: var(--radius-md); background: transparent; font-family: var(--font-sans); font-size: 11px; color: var(--color-text-tertiary); cursor: pointer; transition: border-color var(--dur-fast), background var(--dur-fast); }
+.attach-drop:hover { border-color: var(--color-accent-border); background: var(--color-accent-subtle); }
+.attach-link { color: var(--color-accent-text); font-weight: 500; cursor: pointer; }
+.attach-link:hover { text-decoration: underline; }
+.attach-form { display: flex; flex-direction: column; gap: 8px; margin: 6px 8px 4px; }
+.attach-input { border: 1px solid var(--color-border-default); border-radius: var(--radius-md); padding: 8px 10px; font-size: 13px; font-family: inherit; outline: 0; color: var(--color-text-primary); background: var(--color-bg-surface); }
+.attach-input:focus { border-color: var(--color-border-focus); box-shadow: var(--shadow-focus); }
+.attach-hint { font-size: 11px; color: var(--color-text-tertiary); }
+.attach-error { font-size: 11px; color: var(--color-danger-text); }
+.attach-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
+/* Three-column cockpit collapses on narrow viewports (tablet/mobile) so the
+   screenshot specs render a usable stacked layout instead of an overflow. */
+@media (max-width: 1100px) {
+  .dgrid { grid-template-columns: 1fr; }
+  .conv-card { height: auto; min-height: 420px; }
+}

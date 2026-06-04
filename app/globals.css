@@ -1,0 +1,19 @@
+/* Fonts are now self-hosted via next/font (app/layout.tsx) — no Google @import.
+   The next/font CSS variables are wired into --font-family-* in design-compat.css. */
+@import './tokens.css';
+/* design-compat (token-name aliases) + design-shell (ported chrome CSS) are
+   imported as separate CSS modules in app/layout.tsx, AFTER this file, so the
+   cascade is: tokens → tailwind base/components/utilities → compat → shell.
+   Loading shell after Tailwind lets the design's .app/.ni/.tbl class rules win
+   over Tailwind's reset for equal-specificity selectors. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-family-sans);
+  font-size: var(--font-size-base);
+  line-height: var(--font-leading-normal);
+}

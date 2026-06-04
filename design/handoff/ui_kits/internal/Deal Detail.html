@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Deal</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .detail-head { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
+  .dh-main { min-width: 0; }
+  .dh-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .dh-title-row h1 { font-family: var(--font-display); font-size: 27px; font-weight: 700; letter-spacing: -.02em; }
+  .dh-sub { font-size: 13px; color: var(--color-text-tertiary); margin-top: 5px; }
+  .dh-sub a { font-weight: 500; }
+  .statuspill { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: var(--radius-full); border: 1px solid var(--color-border-default); background: var(--color-bg-surface); cursor: pointer; transition: border-color var(--dur-fast); white-space: nowrap; }
+  .statuspill:hover { border-color: var(--color-border-strong); }
+  .statuspill .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .statuspill i { font-size: 13px; color: var(--color-text-muted); }
+  .menu { position: absolute; z-index: 40; background: var(--color-bg-surface-raised); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); padding: 5px; min-width: 180px; }
+  .menu button { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; font-family: var(--font-sans); font-size: 13px; color: var(--color-text-primary); background: transparent; border: 0; padding: 7px 9px; border-radius: var(--radius-sm); cursor: pointer; }
+  .menu button:hover { background: var(--color-bg-hover); }
+  .menu .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dgrid { display: grid; grid-template-columns: 270px minmax(0, 1fr) 326px; gap: 16px; align-items: start; }
+  .conv-card { display: flex; flex-direction: column; height: 520px; }
+  .conv-card .thread { flex: 1; }
+  .multi { display: flex; align-items: center; }
+  .multi .add { width: 26px; height: 26px; border-radius: 50%; border: 1px dashed var(--color-border-strong); display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-muted); cursor: pointer; margin-left: 4px; }
+  .convert { background: linear-gradient(180deg, var(--color-success-bg), transparent 70%); border-color: var(--color-success-border); }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="deals"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle" title="Collapse nav"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><a href="Deals.html">Deals</a><i data-lucide="chevron-right"></i><span class="here">Annual retainer</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+
+    <div class="scroll">
+      <div class="sheet" data-screen-label="Deal Detail — Annual retainer">
+
+        <div class="detail-head">
+          <div class="dh-main">
+            <div class="dh-title-row">
+              <h1>Annual retainer</h1>
+              <span class="statuspill" id="stagePill"><span class="dot" style="background:var(--green-500)"></span><span id="stageLabel">Won</span><i data-lucide="chevron-down"></i></span>
+            </div>
+            <div class="dh-sub"><span class="mono">DL-101</span> · <a href="Contact Detail.html">Ravi Menon</a> · <a href="Company Detail.html">Acme Robotics Pvt Ltd</a> · created 2026-01-08 · updated 2h ago</div>
+          </div>
+          <div class="spacer"></div>
+          <button class="btn btn-secondary"><i data-lucide="pencil"></i>Edit</button>
+          <button class="btn btn-primary"><i data-lucide="plus"></i>Create</button>
+        </div>
+
+        <div class="statstrip" style="margin-bottom:18px">
+          <div class="stat"><div class="k">Deal value</div><div class="v">₹18.0L</div></div>
+          <div class="stat"><div class="k">Received</div><div class="v" style="color:var(--color-success-text)">₹6.8L</div><div class="s">38% collected</div></div>
+          <div class="stat"><div class="k">Outstanding</div><div class="v" style="color:var(--color-warning-text)">₹11.2L</div></div>
+          <div class="stat"><div class="k">Probability</div><div class="v">100%</div><div class="s">closed won</div></div>
+          <div class="stat"><div class="k">Owners</div><div style="margin-top:6px"><div class="ostack"><span class="wrap"><span class="avatar" style="background:var(--iris-600)">AR</span></span><span class="wrap"><span class="avatar" style="background:var(--sky-600)">PM</span></span></div></div></div>
+        </div>
+
+        <div class="dgrid">
+
+          <!-- LEFT META -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Deal details</h3></div>
+              <div class="card-b" style="padding-top:8px">
+                <div class="meta-row"><span class="k">Deal ID</span><span class="mono" style="font-size:13px;color:var(--color-text-secondary)">DL-101</span></div>
+                <div class="meta-row"><span class="k">Value</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:14px;font-weight:600">₹18,00,000</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Stage</span><div class="ie" data-ie="static"><span class="status"><span class="dot" style="background:var(--green-500)"></span>Won</span></div></div>
+                <div class="meta-row"><span class="k">Expected close</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">2026-05-30</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Probability</span><div class="ie" data-ie="text"><span class="ie-val">100%</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Source</span><div class="ie" data-ie="text"><span class="ie-val">Upwork Direct</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Contact</span><div class="ie" data-ie="static"><a href="Contact Detail.html" style="font-size:14px">Ravi Menon</a></div></div>
+                <div class="meta-row"><span class="k">Company</span><div class="ie" data-ie="static"><a href="Company Detail.html" style="font-size:14px">Acme Robotics Pvt Ltd</a></div></div>
+                <div class="meta-row"><span class="k">Owners</span>
+                  <div class="multi" style="margin-top:4px"><div class="ostack"><span class="wrap"><span class="avatar" style="background:var(--iris-600)">AR</span><span class="sdot" style="background:var(--color-status-active);position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;box-shadow:0 0 0 2px var(--color-bg-surface)"></span></span><span class="wrap"><span class="avatar" style="background:var(--sky-600)">PM</span></span></div><span class="add"><i data-lucide="plus" style="font-size:13px"></i></span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Attachments</h3><span class="badge" style="background:var(--color-warning-bg);color:var(--color-warning-text);font-size:9px;border:1px solid var(--color-warning-border)"><i data-lucide="lock" style="font-size:11px"></i>Sensitive</span></div>
+              <div class="card-b" style="padding:6px">
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm)"><i data-lucide="file-text" style="font-size:18px;color:var(--color-danger-fg)"></i><div class="t"><div class="l1">Proposal_Acme_v2.pdf</div><div class="l2 mono">PDF · 1.2 MB</div></div><i data-lucide="download" style="color:var(--color-text-tertiary)"></i></div>
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm);border-top:0"><i data-lucide="file-signature" style="font-size:18px;color:var(--color-text-tertiary)"></i><div class="t"><div class="l1">Signed contract</div><div class="l2 mono">reveal & log access</div></div><button class="icon-btn" id="revealCreds" style="width:28px;height:28px"><i data-lucide="eye"></i></button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CENTER · negotiation history -->
+          <div class="card conv-card">
+            <div style="padding:12px 14px;border-bottom:1px solid var(--color-border-subtle)">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><i data-lucide="messages-square" style="color:var(--color-text-tertiary)"></i><h3 style="font-family:var(--font-sans);font-size:13px;font-weight:700;white-space:nowrap">Negotiation history</h3><span class="cnt">closed in 18 days</span></div>
+              <div class="chips" id="chips">
+                <span class="chip active" data-ch="all">All</span>
+                <span class="chip" data-ch="upwork"><span class="dot" style="background:var(--ch-upwork)"></span>Upwork</span>
+                <span class="chip" data-ch="gmail"><span class="dot" style="background:var(--ch-gmail)"></span>Gmail</span>
+                <span class="chip" data-ch="call"><span class="dot" style="background:var(--ch-phone)"></span>Calls</span>
+              </div>
+            </div>
+            <div class="thread" id="thread">
+              <div class="day">12 Jan</div>
+              <div class="msg-in"><span class="av-sm" style="background:var(--ch-upwork)">RM</span><div><div class="bubble-in">We'd want this as an annual retainer rather than one-off — does that work on your side?</div><div class="msg-meta"><span class="dot" style="background:var(--ch-upwork)"></span>Upwork · Ravi M. · 11:20</div></div></div>
+              <div class="msg-out"><div><div class="bubble-out">Yes — retainer suits ongoing automation work well. Sending a proposal at ₹18L / year.</div><div class="msg-meta" style="justify-content:flex-end"><span class="dot" style="background:var(--ch-gmail)"></span>You · 14:02 · <i data-lucide="check-check" style="color:var(--color-info-fg)"></i></div></div></div>
+              <div class="callcard">
+                <div style="width:34px;height:34px;border-radius:var(--radius-md);background:var(--color-info-bg);display:flex;align-items:center;justify-content:center;flex:none"><i data-lucide="phone" class="ic-fill" style="color:var(--color-info-solid)"></i></div>
+                <div style="flex:1"><div style="font-size:13px;font-weight:600">Pricing call · 24 min</div><div style="font-size:11px;color:var(--color-text-tertiary)">Agreed scope & quarterly billing</div></div>
+                <a class="badge" style="background:var(--color-ai-tint);color:var(--color-accent-text);font-size:9px" href="#"><i data-lucide="sparkles" style="font-size:11px"></i>AI summary</a>
+              </div>
+              <div class="day">26 Jan</div>
+              <div class="msg-in"><span class="av-sm" style="background:var(--ch-gmail)">RM</span><div><div class="bubble-in">Signed and sent back. Looking forward to kicking off!</div><div class="msg-meta"><span class="dot" style="background:var(--ch-gmail)"></span>Gmail · Ravi M. · 09:48</div></div></div>
+            </div>
+            <div class="composer">
+              <button class="icon-btn" style="width:30px;height:30px" title="Channel"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--ch-gmail);display:inline-block"></span></button>
+              <input class="inp" id="composerInput" placeholder="Reply to Ravi…">
+              <button class="icon-btn" style="width:30px;height:30px"><i data-lucide="paperclip"></i></button>
+              <button class="btn btn-primary btn-sm" id="sendBtn" style="padding:8px 10px"><i data-lucide="send"></i></button>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="stack">
+            <!-- Convert to project (Won) -->
+            <div class="card convert" id="convertCard">
+              <div class="card-b">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px"><i data-lucide="party-popper" style="color:var(--color-success-text)"></i><span style="font-weight:700;font-size:14px;color:var(--color-success-text)">Deal won</span></div>
+                <div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.5;margin-bottom:12px">Turn this into a delivery project — milestones, tasks and billing carry over automatically.</div>
+                <button class="btn btn-primary" id="convertBtn" style="width:100%;justify-content:center"><i data-lucide="arrow-right-circle"></i>Convert to project</button>
+              </div>
+            </div>
+
+            <div class="card ai-card">
+              <div class="card-h" style="border-bottom:0;padding-bottom:4px"><i data-lucide="sparkles" class="ic-fill" style="color:var(--color-accent)"></i><h3>AI Supervisor</h3><span style="margin-left:auto;font-size:10px;color:var(--color-text-muted)">on this deal</span></div>
+              <div class="card-b" style="padding-top:6px;display:flex;flex-direction:column;gap:8px">
+                <div class="insight"><i data-lucide="trending-up" style="color:var(--color-ai-positive)"></i><p>Closed in 18 days — faster than your 31-day average for retainers.</p></div>
+                <div class="insight"><i data-lucide="lightbulb" style="color:var(--color-ai-neutral)"></i><p>Suggested next step: schedule kickoff within 5 days to keep momentum from the close.</p></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Notes</h3><span class="cnt">1</span><button class="btn btn-ghost btn-sm more" style="padding:4px 8px"><i data-lucide="plus"></i>Add</button></div>
+              <div class="card-b">
+                <div style="border-left:2px solid var(--color-accent-border);padding-left:12px">
+                  <div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.5">Retainer renews annually in Jan. Flag for renewal conversation in Nov.</div>
+                  <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">Arjun R. · 2026-01-26</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg"></span></div>
+
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="inline-edit.js"></script>
+<script>
+const STAGES = [['Lead','var(--n-400)'],['Qualified','var(--sky-500)'],['Proposal Sent','var(--iris-500)'],['Negotiation','var(--amber-500)'],['Won','var(--green-500)'],['Lost','var(--red-500)']];
+if (window.lucide) lucide.createIcons();
+initInlineEdit();
+document.getElementById('navToggle').onclick = function(){ document.getElementById('app').classList.toggle('collapsed'); };
+document.getElementById('chips').addEventListener('click', function(e){ const c = e.target.closest('.chip'); if (!c) return; document.querySelectorAll('.chip').forEach(function(x){ x.classList.remove('active'); }); c.classList.add('active'); });
+function send(){ const inp = document.getElementById('composerInput'); const v = inp.value.trim(); if (!v) return; const thread = document.getElementById('thread'); const now = new Date().toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' }); const el = document.createElement('div'); el.className = 'msg-out'; el.innerHTML = '<div><div class="bubble-out">' + v.replace(/</g,'&lt;') + '</div><div class="msg-meta" style="justify-content:flex-end"><span class="dot" style="background:var(--ch-gmail)"></span>You · ' + now + ' · <i data-lucide="check-check" style="color:var(--color-info-fg)"></i></div></div>'; thread.appendChild(el); inp.value=''; thread.scrollTop = thread.scrollHeight; if (window.lucide) lucide.createIcons(); }
+document.getElementById('sendBtn').onclick = send;
+document.getElementById('composerInput').addEventListener('keydown', function(e){ if (e.key === 'Enter') send(); });
+document.getElementById('revealCreds').addEventListener('click', function(){ gsToast('Access logged · revealing contract…'); });
+
+// Convert to project → shows linked project state
+document.getElementById('convertBtn').addEventListener('click', function(){
+  const card = document.getElementById('convertCard');
+  card.classList.remove('convert');
+  card.querySelector('.card-b').innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><i data-lucide="circle-check" class="ic-fill" style="color:var(--color-success-fg)"></i><span style="font-weight:700;font-size:14px">Converted to project</span></div>'
+    + '<a href="index.html" class="sum" style="text-decoration:none;border-top:0"><i data-lucide="kanban" style="color:var(--color-text-tertiary)"></i><div class="t"><div class="l1">Lead-routing automation</div><div class="l2 mono">PRJ-0418 · just created</div></div><i data-lucide="chevron-right" style="color:var(--color-text-muted)"></i></a>';
+  if (window.lucide) lucide.createIcons();
+  gsToast('Project created from deal · PRJ-0418');
+});
+
+// stage enum
+const pill = document.getElementById('stagePill'); let openMenu = null;
+function closeMenu(){ if (openMenu) { openMenu.remove(); openMenu = null; } }
+pill.addEventListener('click', function(e){
+  e.stopPropagation(); if (openMenu) { closeMenu(); return; }
+  const m = document.createElement('div'); m.className = 'menu';
+  m.innerHTML = STAGES.map(function(s){ return '<button data-s="' + s[0] + '"><span class="dot" style="background:' + s[1] + '"></span>' + s[0] + '</button>'; }).join('');
+  document.body.appendChild(m); const r = pill.getBoundingClientRect(); m.style.top = (r.bottom + 6) + 'px'; m.style.left = r.left + 'px'; openMenu = m;
+  m.addEventListener('click', function(ev){ const b = ev.target.closest('button'); if (!b) return; const s = STAGES.find(function(x){ return x[0] === b.dataset.s; }); pill.querySelector('.dot').style.background = s[1]; document.getElementById('stageLabel').textContent = s[0]; closeMenu(); gsToast('Stage updated · ' + s[0]); });
+});
+document.addEventListener('click', closeMenu);
+</script>
+</body>
+</html>

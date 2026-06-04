@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Tasks</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .seg { display:inline-flex; background:var(--color-bg-subtle); border:1px solid var(--color-border-subtle); border-radius:var(--radius-md); padding:2px; }
+  .seg button { font-family:var(--font-sans); font-size:12px; font-weight:600; color:var(--color-text-tertiary); background:transparent; border:0; padding:5px 11px; border-radius:6px; cursor:pointer; }
+  .seg button.on { background:var(--color-bg-surface); color:var(--color-text-primary); box-shadow:var(--shadow-xs); }
+  .skel { height:13px; border-radius:4px; background:linear-gradient(90deg,var(--color-bg-active),var(--color-bg-subtle),var(--color-bg-active)); background-size:200% 100%; animation:shimmer 1.3s linear infinite; }
+  @keyframes shimmer { to { background-position:-200% 0; } }
+  .tid { width:28px; height:28px; border-radius:var(--radius-md); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:10px; font-weight:600; flex:none; background:var(--color-bg-subtle); color:var(--color-text-tertiary); }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="tasks"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><span class="here">Tasks</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+    <div class="scroll">
+      <div class="sheet" style="max-width:1320px" data-screen-label="Tasks — list">
+        <div class="page-h">
+          <div><h1>Tasks</h1><div class="sub">11 open across 4 projects</div></div>
+          <div class="spacer"></div>
+          <div class="seg" id="stateSeg"><button data-state="data" class="on">Populated</button><button data-state="loading">Loading</button><button data-state="empty">Empty</button></div>
+          <button class="btn btn-primary"><i data-lucide="plus"></i>New task</button>
+        </div>
+        <div class="ai-strip"><span class="mk"><i data-lucide="sparkles" class="ic-fill"></i></span><p><b>4 tasks need attention</b> — 2 overdue, 1 stuck, 1 in QA over 3 days. <a href="Task Detail.html">Open the oldest →</a></p></div>
+        <div class="filterbar" id="filterbar">
+          <div class="search-in"><i data-lucide="search" style="font-size:15px;color:var(--color-text-muted)"></i><input id="search" placeholder="Search tasks…"></div>
+          <button class="fdrop" data-f="project">Project<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="milestone">Milestone<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="status">Status<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="priority">Priority<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="assignee">Assignee<i data-lucide="chevron-down"></i></button>
+        </div>
+        <div class="tbl-wrap" id="tblWrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="list-kit.js"></script>
+<script>
+var ST = { done:['Done','var(--green-500)'], qa:['QA Review','var(--sky-500)'], wip:['In Progress','var(--iris-500)'], stuck:['Stuck','var(--red-500)'], todo:['To-do','var(--n-400)'] };
+var rows = [
+  {id:'TK-101', t:'Handle duplicate-lead collision', ctx:'Lead-routing · M4', st:'wip', prio:'High', sched:['Due 1d','warning'], asn:[['DV','away']], mgr:'NK', due:'2026-06-04', hrs:'4.5h'},
+  {id:'TK-102', t:'Slack message formatting + lead score', ctx:'Lead-routing · M4', st:'wip', prio:'High', sched:['Due 2d','warning'], asn:[['DV','away']], mgr:'NK', due:'2026-06-05', hrs:'2.0h'},
+  {id:'TK-103', t:'Notification copy + tone pass', ctx:'Lead-routing · M4', st:'todo', prio:'Low', sched:['Due 3d','warning'], asn:[['NK','active']], mgr:'AR', due:'2026-06-06', hrs:'0h'},
+  {id:'TK-104', t:'QA onboarding chatbot flows', ctx:'Onboarding · M2', st:'qa', prio:'Medium', sched:['Due 1d','warning'], asn:[['DV','away'],['NK','active']], mgr:'PM', due:'2026-06-04', hrs:'6.5h'},
+  {id:'TK-105', t:'Fix reporting timezone bug', ctx:'Logistics · M2', st:'stuck', prio:'High', sched:['Overdue 2d','danger'], asn:[['SK','left']], mgr:'PM', due:'2026-05-31', hrs:'3.0h'},
+  {id:'TK-106', t:'Data sync retry logic', ctx:'Support copilot · M1', st:'done', prio:'Medium', sched:['Delivered','info'], asn:[['NK','active']], mgr:'AR', due:'2026-05-28', hrs:'5.0h'},
+  {id:'TK-107', t:'Content ingestion parser', ctx:'Content pipeline · M1', st:'wip', prio:'Medium', sched:['On track','success'], asn:[['AR','active']], mgr:'PM', due:'2026-06-10', hrs:'8.0h'},
+  {id:'TK-108', t:'Slack ops slash-commands', ctx:'Slack ops bot · M3', st:'todo', prio:'Low', sched:['On track','success'], asn:[['AR','active']], mgr:'NK', due:'2026-06-08', hrs:'0h'},
+];
+initList({
+  containerId:'tblWrap', navHref:'Task Detail.html',
+  emptyIcon:'square-check', emptyTitle:'No tasks match these filters', emptyText:'Try clearing a filter, or create a task on a milestone.',
+  search:function(r,q){ return r.t.toLowerCase().indexOf(q)>-1 || r.ctx.toLowerCase().indexOf(q)>-1; },
+  columns:[
+    {label:'Task', render:function(r){ return '<div class="cell-name"><span class="tid">'+r.id.replace('TK-','T')+'</span><div><div class="nm">'+r.t+'</div><div class="co">'+r.ctx+'</div></div></div>'; }},
+    {label:'Status', render:function(r){ return LK.status(ST[r.st][0], ST[r.st][1]); }},
+    {label:'Priority', render:function(r){ return LK.prio(r.prio); }},
+    {label:'Delivery', render:function(r){ return LK.sched(r.sched[0], r.sched[1]); }},
+    {label:'Assignees', render:function(r){ return LK.ostack(r.asn); }},
+    {label:'Manager', render:function(r){ return LK.avatar(r.mgr, LK.OWN[r.mgr], 24); }},
+    {label:'Due', num:true, render:function(r){ return LK.mono(r.due); }},
+    {label:'Effort', num:true, render:function(r){ return LK.muted(r.hrs); }}
+  ],
+  rows:rows
+});
+</script>
+</body>
+</html>

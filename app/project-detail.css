@@ -1,0 +1,222 @@
+/* app/project-detail.css — project-specific cockpit styles.
+   The SHARED cockpit chrome (.detail-head, .dh-*, .statuspill, .dgrid, .multi,
+   .conv-card, .schedule, .more-link, .attach-*, .menu) comes from
+   app/contact-detail.css, which the Project Detail page imports. The shared LIST
+   + card primitives (.card, .card-h/-b, .statstrip/.stat, .tabs/.tab/.pane,
+   .tag/.tag-row, .cred/.lock, .insight, .av-sm, .ostack/.wrap/.sdot, .page-h,
+   .tbl, .filterbar, .fdrop, .search-in) come from app/design-shell.css.
+
+   This file adds ONLY what the Project screens need beyond that — ported from
+   design/handoff/ui_kits/internal/index.html (full) and
+   "Project (Developer view).html". Tokens-only: every color is a var(); plain CSS
+   px metrics are allowed (the tokens check flags raw hex and [NNpx] arbitrary
+   Tailwind values only, never bare CSS px). */
+
+/* ---- Header strip (phead) ---------------------------------------------- */
+.phead {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.ptitle-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.ptitle {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+.pid {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--color-text-tertiary);
+  margin-top: 4px;
+}
+.badge-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+/* Name wrapper holds the inline-editable H1 so the status + schedule pills sit
+   tight beside it (same idea as .dh-name on the contact header). */
+.p-name {
+  min-width: 0;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* The project cockpit uses a slightly different 3-column rhythm than the contact
+   .dgrid: a wider center column for delivery (timeline + tabs). */
+.pcols {
+  display: grid;
+  grid-template-columns: 252px minmax(0, 1fr) 312px;
+  gap: 16px;
+  align-items: start;
+  margin-top: 18px;
+}
+
+/* ---- Completion / billing progress bar --------------------------------- */
+.bar {
+  height: 8px;
+  border-radius: var(--radius-full);
+  background: var(--color-bg-active);
+  overflow: hidden;
+}
+.bar > div {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--color-success-solid);
+}
+.bar.accent > div {
+  background: var(--color-accent);
+}
+.bill-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  border-top: 1px solid var(--color-border-subtle);
+  font-size: 13px;
+}
+.bill-row .v {
+  font-family: var(--font-mono);
+  font-weight: 500;
+}
+
+/* ---- Milestone / task delivery rows (tabs panes + related cards) -------- */
+.row-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-top: 1px solid var(--color-border-subtle);
+  text-decoration: none;
+  color: inherit;
+}
+.row-item:first-child {
+  border-top: 0;
+}
+.row-item:hover {
+  background: var(--color-bg-hover);
+  text-decoration: none;
+}
+/* Project rows use the larger numeral/checkbox from index.html (26px / 18px),
+   scoped to .row-item so they don't clobber the contact card's 24px/16px. */
+.row-item .ms-num {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  flex: none;
+}
+.row-item .check {
+  width: 18px;
+  height: 18px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--color-border-strong);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  color: var(--primitive-neutral-white);
+}
+.row-item .check.done {
+  background: var(--color-success-solid);
+  border-color: var(--color-success-solid);
+}
+
+/* ---- Overview / requirement markdown body ------------------------------ */
+.md {
+  font-size: 13.5px;
+  line-height: 1.6;
+  color: var(--color-text-secondary);
+}
+.md b {
+  color: var(--color-text-primary);
+}
+
+/* ---- Blockers (developer delivery cockpit) ----------------------------- */
+.blocker {
+  display: flex;
+  gap: 11px;
+  padding: 11px 13px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border-subtle);
+}
+.blocker .ic {
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+}
+
+/* ---- Tests pane rows --------------------------------------------------- */
+.test-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-top: 1px solid var(--color-border-subtle);
+  font-size: 13px;
+}
+.test-row:first-child {
+  border-top: 0;
+}
+.tpass {
+  color: var(--color-success-text);
+}
+.tfail {
+  color: var(--color-danger-text);
+}
+
+/* Empty-state card body for the Tests tab (no tests recorded yet). */
+.pane-empty {
+  padding: 40px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.pane-empty .ic {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-lg);
+  background: var(--color-accent-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 6px;
+}
+
+/* ---- List-table completion bar (Projects list) ------------------------- */
+.tbl .pct {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tbl .pct .bar {
+  flex: 1;
+  max-width: 84px;
+  height: 6px;
+}
+
+/* Three-column cockpit collapses on narrow viewports (tablet/mobile). */
+@media (max-width: 1100px) {
+  .pcols {
+    grid-template-columns: 1fr;
+  }
+}

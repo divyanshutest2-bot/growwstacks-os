@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Payment</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .detail-head { display:flex; align-items:center; gap:16px; margin-bottom:18px; }
+  .dh-main { min-width:0; }
+  .dh-title-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .dh-amount { font-family:var(--font-mono); font-size:34px; font-weight:600; letter-spacing:-.01em; }
+  .dh-sub { font-size:13px; color:var(--color-text-tertiary); margin-top:6px; }
+  .dh-sub a { font-weight:500; }
+  .statuspill { display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; padding:5px 12px; border-radius:var(--radius-full); cursor:pointer; white-space:nowrap; }
+  .statuspill i { font-size:13px; opacity:.7; }
+  .menu { position:absolute; z-index:40; background:var(--color-bg-surface-raised); border:1px solid var(--color-border-subtle); border-radius:var(--radius-md); box-shadow:var(--shadow-lg); padding:5px; min-width:190px; }
+  .menu .mh { font-size:9px; letter-spacing:.06em; text-transform:uppercase; color:var(--color-text-tertiary); padding:6px 9px 3px; }
+  .menu button { display:flex; align-items:center; gap:8px; width:100%; text-align:left; font-family:var(--font-sans); font-size:13px; color:var(--color-text-primary); background:transparent; border:0; padding:7px 9px; border-radius:var(--radius-sm); cursor:pointer; }
+  .menu button:hover:not(:disabled) { background:var(--color-bg-hover); }
+  .menu button:disabled { color:var(--color-text-muted); cursor:not-allowed; }
+  .menu .dot { width:7px; height:7px; border-radius:50%; }
+  .dgrid { display:grid; grid-template-columns:300px minmax(0,1fr) 320px; gap:16px; align-items:start; }
+  .against { display:inline-flex; align-items:center; gap:5px; font-family:var(--font-mono); font-size:11px; font-weight:500; padding:3px 8px; border-radius:var(--radius-sm); background:var(--color-bg-subtle); color:var(--color-text-secondary); border:1px solid var(--color-border-subtle); }
+
+  /* lifecycle */
+  .life { display:flex; align-items:center; gap:0; }
+  .life .step { flex:1; text-align:center; position:relative; }
+  .life .node { width:28px; height:28px; border-radius:50%; margin:0 auto 7px; display:flex; align-items:center; justify-content:center; border:2px solid var(--color-border-default); background:var(--color-bg-surface); position:relative; z-index:1; }
+  .life .node i { font-size:13px; color:var(--color-text-muted); }
+  .life .step.done .node { background:var(--color-success-solid); border-color:var(--color-success-solid); }
+  .life .step.done .node i { color:#fff; }
+  .life .step.current .node { background:var(--color-warning-solid); border-color:var(--color-warning-solid); }
+  .life .step.current .node i { color:#fff; }
+  .life .step::before { content:''; position:absolute; top:14px; left:-50%; width:100%; height:2.5px; background:var(--color-border-default); z-index:0; }
+  .life .step:first-child::before { display:none; }
+  .life .step.done::before, .life .step.current::before { background:var(--color-success-solid); }
+  .life .lbl { font-size:11px; color:var(--color-text-tertiary); font-weight:500; }
+  .life .step.current .lbl { color:var(--color-warning-text); font-weight:600; }
+  .act-row { display:flex; gap:10px; padding:9px 0; border-top:1px solid var(--color-border-subtle); font-size:13px; } .act-row:first-child { border-top:0; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="payments"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><a href="Payments.html">Payments</a><i data-lucide="chevron-right"></i><span class="here">PMT-0007</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+    <div class="scroll">
+      <div class="sheet" data-screen-label="Payment Detail — PMT-0007">
+        <div class="detail-head">
+          <div class="dh-main">
+            <div class="dh-title-row">
+              <span class="dh-amount">₹3,50,000</span>
+              <span class="statuspill" id="statusPill" style="background:var(--color-danger-bg);color:var(--color-danger-text);border:1px solid var(--color-danger-border)"><span class="dot" style="background:var(--color-danger-solid)"></span><span id="statusLabel">Overdue · 9 days</span><i data-lucide="chevron-down"></i></span>
+            </div>
+            <div class="dh-sub"><span class="mono">PMT-0007</span> · for <a href="Milestone Detail.html">M2 · HubSpot integration</a> · <a href="Contact Detail.html">Ravi Menon</a> · <a href="Company Detail.html">Acme Robotics</a></div>
+          </div>
+          <div class="spacer"></div>
+          <button class="btn btn-secondary"><i data-lucide="pencil"></i>Edit</button>
+          <button class="btn btn-primary" id="chaseBtn"><i data-lucide="send"></i>Send reminder</button>
+        </div>
+
+        <div class="dgrid">
+          <!-- LEFT META -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Payment details</h3></div>
+              <div class="card-b" style="padding-top:8px">
+                <div class="meta-row"><span class="k">Payment ID</span><span class="mono" style="font-size:13px;color:var(--color-text-secondary)">PMT-0007</span></div>
+                <div class="meta-row"><span class="k">Amount</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:14px;font-weight:600">₹3,50,000</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Currency</span><div class="ie" data-ie="static"><span style="font-size:14px">🇮🇳 INR</span></div></div>
+                <div class="meta-row"><span class="k">Against</span><div style="margin-top:4px"><span class="against"><i data-lucide="flag" style="font-size:11px"></i>M2 · HubSpot integration</span></div></div>
+                <div class="meta-row"><span class="k">Due date</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">2026-05-24</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Sent date</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">2026-05-10</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Paid date</span><span style="font-size:13px;color:var(--color-text-muted)">—</span></div>
+                <div class="meta-row"><span class="k">Method</span><div class="ie" data-ie="text"><span class="ie-val">Bank transfer</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Transaction no.</span><span style="font-size:13px;color:var(--color-text-muted)">—</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Attachments</h3><span class="badge" style="background:var(--color-warning-bg);color:var(--color-warning-text);font-size:9px;border:1px solid var(--color-warning-border)"><i data-lucide="lock" style="font-size:11px"></i>Sensitive</span></div>
+              <div class="card-b" style="padding:6px">
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm)"><i data-lucide="file-text" style="font-size:18px;color:var(--color-danger-fg)"></i><div class="t"><div class="l1">Invoice_PMT0007.pdf</div><div class="l2 mono">PDF · 84 KB</div></div><i data-lucide="download" style="color:var(--color-text-tertiary)"></i></div>
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm);border-top:0"><i data-lucide="receipt" style="font-size:18px;color:var(--color-text-tertiary)"></i><div class="t"><div class="l1">Proof of payment</div><div class="l2 mono">reveal & log access</div></div><button class="icon-btn" id="revealBtn" style="width:28px;height:28px"><i data-lucide="eye"></i></button></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CENTER -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Lifecycle</h3><span style="margin-left:auto;font-size:11px;color:var(--color-text-tertiary)">draft → sent → paid → confirmed</span></div>
+              <div class="card-b" style="padding:22px 20px">
+                <div class="life">
+                  <div class="step done"><div class="node"><i data-lucide="check"></i></div><div class="lbl">Draft</div></div>
+                  <div class="step done"><div class="node"><i data-lucide="check"></i></div><div class="lbl">Sent</div></div>
+                  <div class="step current"><div class="node"><i data-lucide="clock"></i></div><div class="lbl">Awaiting payment</div></div>
+                  <div class="step"><div class="node"><i data-lucide="circle"></i></div><div class="lbl">Paid</div></div>
+                  <div class="step"><div class="node"><i data-lucide="shield-check"></i></div><div class="lbl">Confirmed</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Note</h3><button class="btn btn-ghost btn-sm more" style="padding:4px 8px"><i data-lucide="pencil"></i>Edit</button></div>
+              <div class="card-b"><p style="font-size:13.5px;line-height:1.6;color:var(--color-text-secondary)">Invoiced with milestone 2 delivery. Acme's finance (Sunil) confirmed receipt of the invoice on 12 May but payment hasn't landed. Sunil is the right contact to chase, not Ravi.</p></div>
+            </div>
+            <div class="card">
+              <div class="card-h"><i data-lucide="square-check" style="color:var(--color-text-tertiary)"></i><h3>Tasks on this payment</h3><span class="cnt">2</span></div>
+              <div class="card-b" style="padding:6px 14px">
+                <div class="sum"><span style="width:16px;height:16px;border:1.5px solid var(--color-border-strong);border-radius:4px;flex:none"></span><div class="t"><div class="l1">Chase Sunil re: bank transfer</div><div class="l2">due today</div></div><span class="schedule" style="background:var(--color-warning-bg);color:var(--color-warning-text);border:1px solid var(--color-warning-border)">Due today</span></div>
+                <div class="sum"><span style="width:16px;height:16px;border:1.5px solid var(--color-border-strong);border-radius:4px;flex:none"></span><div class="t"><div class="l1">Send receipt once confirmed</div><div class="l2">blocked on payment</div></div><span class="status">To-do</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="stack">
+            <div class="card" style="border-color:var(--color-danger-border)">
+              <div class="card-b">
+                <div class="k" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-text-tertiary)">Amount due</div>
+                <div class="mono" style="font-size:30px;font-weight:600;color:var(--color-text-primary);line-height:1.1;margin:4px 0 8px">₹3.50L</div>
+                <span class="schedule" style="background:var(--color-danger-bg);color:var(--color-danger-text);border:1px solid var(--color-danger-border)"><i data-lucide="clock" style="font-size:12px"></i>9 days overdue</span>
+              </div>
+            </div>
+            <div class="card ai-card">
+              <div class="card-h" style="border-bottom:0;padding-bottom:4px"><i data-lucide="sparkles" class="ic-fill" style="color:var(--color-accent)"></i><h3>AI Supervisor</h3></div>
+              <div class="card-b" style="padding-top:6px"><div class="insight"><i data-lucide="info" style="color:var(--color-ai-risk)"></i><p>9 days overdue, but Acme has a clean payment history — likely an internal delay, not a risk. A single polite nudge to Sunil usually resolves these.</p></div></div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Activity</h3></div>
+              <div class="card-b">
+                <div class="act-row"><i data-lucide="file-plus" style="color:var(--color-text-tertiary)"></i><div style="flex:1"><div>Created by <b>Arjun R.</b></div><div style="font-size:11px;color:var(--color-text-muted)">2026-05-10</div></div></div>
+                <div class="act-row"><i data-lucide="send" style="color:var(--color-text-tertiary)"></i><div style="flex:1"><div>Invoice sent</div><div style="font-size:11px;color:var(--color-text-muted)">2026-05-10</div></div></div>
+                <div class="act-row"><i data-lucide="shield" style="color:var(--color-text-muted)"></i><div style="flex:1"><div style="color:var(--color-text-tertiary)">Confirmed by — <span style="font-style:italic">not yet confirmed</span></div><div style="font-size:11px;color:var(--color-text-muted)">finance-gated</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg"></span></div>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="inline-edit.js"></script>
+<script>
+// Status is finance-gated: only finance can move to Paid/Confirmed. This user is PM → those are disabled.
+var ROLE = 'PM';
+var STATUSES = [['Draft','var(--n-400)',false],['Sent','var(--sky-500)',false],['Overdue','var(--red-500)',false],['Client paid','var(--iris-500)',true],['Received','var(--green-500)',true],['Confirmed','var(--green-600)',true]];
+if (window.lucide) lucide.createIcons();
+initInlineEdit();
+document.getElementById('navToggle').onclick=function(){ document.getElementById('app').classList.toggle('collapsed'); };
+document.getElementById('revealBtn').addEventListener('click', function(){ gsToast('Access logged · revealing proof of payment…'); });
+document.getElementById('chaseBtn').addEventListener('click', function(){ gsToast('Reminder drafted to Sunil (finance)'); });
+var pill=document.getElementById('statusPill'),openMenu=null;
+function closeMenu(){ if(openMenu){ openMenu.remove(); openMenu=null; } }
+pill.addEventListener('click',function(e){
+  e.stopPropagation(); if(openMenu){ closeMenu(); return; }
+  var m=document.createElement('div'); m.className='menu';
+  var gated = STATUSES.some(function(s){return s[2];}) && ROLE!=='Finance';
+  m.innerHTML = STATUSES.map(function(s){ var dis=s[2]&&ROLE!=='Finance'; return '<button data-s="'+s[0]+'"'+(dis?' disabled':'')+'><span class="dot" style="background:'+s[1]+'"></span>'+s[0]+(dis?' <i data-lucide="lock" style="font-size:11px;margin-left:auto"></i>':'')+'</button>'; }).join('')
+    + (gated?'<div class="mh" style="padding:6px 9px 4px;border-top:1px solid var(--color-border-subtle);margin-top:4px;text-transform:none;letter-spacing:0;color:var(--color-text-muted)">Paid / Confirmed are finance-gated</div>':'');
+  document.body.appendChild(m); var r=pill.getBoundingClientRect(); m.style.top=(r.bottom+6)+'px'; m.style.left=r.left+'px'; openMenu=m;
+  if(window.lucide)lucide.createIcons();
+  m.addEventListener('click',function(ev){ var b=ev.target.closest('button'); if(!b||b.disabled)return; var s=STATUSES.find(function(x){return x[0]===b.dataset.s;}); document.getElementById('statusLabel').textContent=s[0]; pill.querySelector('.dot').style.background=s[1]; closeMenu(); gsToast('Status saved · '+s[0]); });
+});
+document.addEventListener('click',closeMenu);
+</script>
+</body>
+</html>

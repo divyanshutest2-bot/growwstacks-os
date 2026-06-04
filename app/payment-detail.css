@@ -1,0 +1,224 @@
+/* app/payment-detail.css — page-specific rules for the Payment Detail cockpit.
+   Ported from design/handoff/ui_kits/internal/Payment Detail.html's <style> block
+   (the money hero, the finance-gated status pill menu, the lifecycle rail, the
+   against tag, the calm-amber overdue treatment, the activity rows). Imports
+   app/contact-detail.css for the shared cockpit chrome (.detail-head, .dh-*,
+   .statuspill menu, .schedule, .dgrid, etc.); this file adds ONLY the
+   payment-specific pieces. Tokens-only: every color is a var(); bare CSS px are
+   fine (the tokens-only check flags raw hex + Tailwind [NNpx] brackets, never
+   plain CSS px). */
+
+/* Money hero — the prominent amount in the header (Payment Detail.html .dh-amount).
+   Overrides the contacts .dh-title-row h1 sizing for the mono money treatment. */
+.pay-amount {
+  font-family: var(--font-mono);
+  font-size: 34px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--color-text-primary);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* against tag — small mono chip linking the payment to its deal / project /
+   milestone (Payments.html + Payment Detail.html .against). */
+.against {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm);
+  background: var(--color-bg-subtle);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border-subtle);
+  white-space: nowrap;
+  text-decoration: none;
+}
+a.against:hover {
+  border-color: var(--color-accent-border);
+  color: var(--color-accent-text);
+}
+
+/* Lifecycle rail (Payment Detail.html .life) — draft → sent → paid → confirmed.
+   Presentational only; reads its state from payment_status, never writes it. */
+.life {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+}
+.life .step {
+  flex: 1;
+  text-align: center;
+  position: relative;
+}
+.life .node {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin: 0 auto 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--color-border-default);
+  background: var(--color-bg-surface);
+  position: relative;
+  z-index: 1;
+}
+.life .node svg {
+  width: 13px;
+  height: 13px;
+  color: var(--color-text-muted);
+}
+.life .step.done .node {
+  background: var(--color-success-solid);
+  border-color: var(--color-success-solid);
+}
+.life .step.done .node svg {
+  color: var(--color-text-on-accent);
+}
+.life .step.current .node {
+  background: var(--color-warning-solid);
+  border-color: var(--color-warning-solid);
+}
+.life .step.current .node svg {
+  color: var(--color-text-on-accent);
+}
+.life .step::before {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: -50%;
+  width: 100%;
+  height: 2.5px;
+  background: var(--color-border-default);
+  z-index: 0;
+}
+.life .step:first-child::before {
+  display: none;
+}
+.life .step.done::before,
+.life .step.current::before {
+  background: var(--color-success-solid);
+}
+.life .lbl {
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  font-weight: 500;
+  line-height: 1.25;
+}
+.life .step.current .lbl {
+  color: var(--color-warning-text);
+  font-weight: 600;
+}
+
+/* Amount-due card accent (right rail) — the calm-amber / overdue-red emphasis. */
+.amount-due-k {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+.amount-due-v {
+  font-family: var(--font-mono);
+  font-size: 30px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  line-height: 1.1;
+  margin: 4px 0 8px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Activity log rows (Payment Detail.html .act-row) — created / sent / confirmed. */
+.act-row {
+  display: flex;
+  gap: 10px;
+  padding: 9px 0;
+  border-top: 1px solid var(--color-border-subtle);
+  font-size: 13px;
+  align-items: flex-start;
+}
+.act-row:first-child {
+  border-top: 0;
+}
+.act-row svg {
+  flex: none;
+  margin-top: 1px;
+}
+.act-row .at {
+  flex: 1;
+  min-width: 0;
+}
+.act-row .at .when {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  margin-top: 1px;
+}
+
+/* Sensitive badge on the Attachments card header (reveal-logged invoice). */
+.sensitive-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: 1px solid var(--color-warning-border);
+  font-size: 9px;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+/* finance-gated status menu — a disabled (locked) item reads muted with a lock
+   icon pushed to the right; the gate footnote sits under the list. Extends the
+   shared .menu from contact-detail.css. */
+.menu button:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+}
+.menu button:disabled:hover {
+  background: transparent;
+}
+.menu button .lock {
+  margin-left: auto;
+}
+.menu .gate-note {
+  font-size: 11px;
+  color: var(--color-text-muted);
+  padding: 6px 9px 4px;
+  border-top: 1px solid var(--color-border-subtle);
+  margin-top: 4px;
+}
+
+/* The confirm block — finance-gated keystone affordance, sits in the lifecycle
+   card. Mirrors the design's button rhythm; the refusal state uses the danger
+   token family so a PM's refusal is unmistakable. */
+.confirm-block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-border-subtle);
+}
+.confirm-refused {
+  border: 1px solid var(--color-danger-border);
+  background: var(--color-danger-bg);
+  color: var(--color-danger-text);
+  border-radius: var(--radius-sm);
+  padding: 8px 11px;
+  font-size: 12px;
+  line-height: 1.45;
+}
+.confirm-success {
+  color: var(--color-success-text);
+  font-size: 12px;
+  font-weight: 600;
+}
+.confirm-hint {
+  color: var(--color-text-tertiary);
+  font-size: 12px;
+}

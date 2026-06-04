@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Users</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .seg { display:inline-flex; background:var(--color-bg-subtle); border:1px solid var(--color-border-subtle); border-radius:var(--radius-md); padding:2px; }
+  .seg button { font-family:var(--font-sans); font-size:12px; font-weight:600; color:var(--color-text-tertiary); background:transparent; border:0; padding:5px 11px; border-radius:6px; cursor:pointer; }
+  .seg button.on { background:var(--color-bg-surface); color:var(--color-text-primary); box-shadow:var(--shadow-xs); }
+  .skel { height:13px; border-radius:4px; background:linear-gradient(90deg,var(--color-bg-active),var(--color-bg-subtle),var(--color-bg-active)); background-size:200% 100%; animation:shimmer 1.3s linear infinite; }
+  @keyframes shimmer { to { background-position:-200% 0; } }
+  .ustat { display:inline-flex; align-items:center; gap:6px; font-size:12px; font-weight:500; }
+  .ustat .d { width:8px; height:8px; border-radius:50%; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="users"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><span class="here">Users</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+    <div class="scroll">
+      <div class="sheet" style="max-width:1280px" data-screen-label="Users — list">
+        <div class="page-h">
+          <div><h1>Users</h1><div class="sub">14 team members · 12 active</div></div>
+          <div class="spacer"></div>
+          <div class="seg" id="stateSeg"><button data-state="data" class="on">Populated</button><button data-state="loading">Loading</button><button data-state="empty">Empty</button></div>
+          <button class="btn btn-primary"><i data-lucide="user-plus"></i>Invite user</button>
+        </div>
+        <div class="ai-strip"><span class="mk"><i data-lucide="sparkles" class="ic-fill"></i></span><p><b>9 team members have capacity and asked for more projects</b> — a good moment to rebalance load. <a href="User Detail.html">See who's free →</a></p></div>
+        <div class="filterbar" id="filterbar">
+          <div class="search-in"><i data-lucide="search" style="font-size:15px;color:var(--color-text-muted)"></i><input id="search" placeholder="Search people…"></div>
+          <button class="fdrop" data-f="role">Role<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="status">Status<i data-lucide="chevron-down"></i></button>
+          <button class="fdrop" data-f="tech">Tech<i data-lucide="chevron-down"></i></button>
+        </div>
+        <div class="tbl-wrap" id="tblWrap"></div>
+      </div>
+    </div>
+  </div>
+</div>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="list-kit.js"></script>
+<script>
+var SD = { active:['Active','var(--color-status-active)'], away:['Away','var(--color-status-away)'], left:['Left org','var(--color-status-left)'] };
+var rows = [
+  {init:'AR', name:'Arjun Rao', role:'Admin', title:'Founder · Admin', email:'arjun@growwstacks.com', st:'active', shift:'10:00–19:00', proj:4, last:'now', color:'var(--iris-600)'},
+  {init:'PM', name:'Priya Menon', role:'PM', title:'Project Manager', email:'priya@growwstacks.com', st:'active', shift:'09:30–18:30', proj:5, last:'12m ago', color:'var(--sky-600)'},
+  {init:'NK', name:'Neha Kapoor', role:'Developer', title:'Senior Developer', email:'neha@growwstacks.com', st:'active', shift:'11:00–20:00', proj:3, last:'4m ago', color:'var(--green-600)'},
+  {init:'DV', name:'Dev Varma', role:'Developer', title:'Automation Developer', email:'dev@growwstacks.com', st:'away', shift:'10:00–19:00', proj:2, last:'2h ago', color:'var(--amber-500)'},
+  {init:'AD', name:'Anika Das', role:'Developer', title:'Developer', email:'anika@growwstacks.com', st:'active', shift:'09:00–18:00', proj:3, last:'8m ago', color:'var(--sky-600)'},
+  {init:'SR', name:'Sunil Rao', role:'Finance', title:'Finance Lead', email:'sunil@growwstacks.com', st:'active', shift:'10:00–18:00', proj:0, last:'1h ago', color:'var(--green-600)'},
+  {init:'MI', name:'Maya Iyer', role:'PM', title:'Project Manager', email:'maya@growwstacks.com', st:'active', shift:'09:30–18:30', proj:4, last:'25m ago', color:'var(--amber-500)'},
+  {init:'SK', name:'Sameer Khan', role:'Developer', title:'Developer', email:'sameer@growwstacks.com', st:'left', shift:'—', proj:0, last:'48d ago', color:'var(--n-500)'},
+];
+initList({
+  containerId:'tblWrap', navHref:'User Detail.html',
+  emptyIcon:'users', emptyTitle:'No team members match these filters', emptyText:'Try clearing a filter, or invite a new team member.',
+  search:function(r,q){ return r.name.toLowerCase().indexOf(q)>-1 || r.title.toLowerCase().indexOf(q)>-1 || r.role.toLowerCase().indexOf(q)>-1; },
+  columns:[
+    {label:'Name', render:function(r){ var dimmed=r.st==='left'?'opacity:.6;':''; return '<div class="cell-name" style="'+dimmed+'"><span class="wrap" style="position:relative;display:inline-block"><span class="avatar" style="background:'+r.color+'">'+r.init+'</span><span style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:'+SD[r.st][1]+';box-shadow:0 0 0 2px var(--color-bg-surface)"></span></span><div><div class="nm">'+r.name+'</div><div class="co">'+r.role+'</div></div></div>'; }},
+    {label:'Email', render:function(r){ return LK.muted(r.email); }},
+    {label:'Job title', render:function(r){ return '<span style="font-size:12px;color:var(--color-text-secondary)">'+r.title+'</span>'; }},
+    {label:'Status', render:function(r){ return '<span class="ustat" style="color:'+(r.st==='left'?'var(--color-text-tertiary)':'var(--color-text-secondary)')+'"><span class="d" style="background:'+SD[r.st][1]+'"></span>'+SD[r.st][0]+'</span>'; }},
+    {label:'Shift', render:function(r){ return LK.mono(r.shift); }},
+    {label:'Projects', num:true, render:function(r){ return r.proj>0?'<span class="mono" style="font-weight:500">'+r.proj+'</span>':LK.muted('0'); }},
+    {label:'Last active', num:true, render:function(r){ return LK.muted(r.last); }}
+  ],
+  rows:rows
+});
+</script>
+</body>
+</html>

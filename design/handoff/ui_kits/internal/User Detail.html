@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — User</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .detail-head { display:flex; align-items:center; gap:16px; margin-bottom:18px; }
+  .dh-main { min-width:0; }
+  .dh-title-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .dh-title-row h1 { font-family:var(--font-display); font-size:27px; font-weight:700; letter-spacing:-.02em; }
+  .dh-sub { font-size:13px; color:var(--color-text-tertiary); margin-top:5px; }
+  .statuspill { display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; padding:5px 12px; border-radius:var(--radius-full); border:1px solid var(--color-border-default); background:var(--color-bg-surface); cursor:pointer; white-space:nowrap; }
+  .statuspill .dot { width:7px; height:7px; border-radius:50%; }
+  .statuspill i { font-size:13px; color:var(--color-text-muted); }
+  .rolepill { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; padding:3px 10px; border-radius:var(--radius-full); background:var(--color-accent-subtle); color:var(--color-accent-text); border:1px solid var(--color-accent-border); cursor:pointer; }
+  .menu { position:absolute; z-index:40; background:var(--color-bg-surface-raised); border:1px solid var(--color-border-subtle); border-radius:var(--radius-md); box-shadow:var(--shadow-lg); padding:5px; min-width:170px; }
+  .menu button { display:flex; align-items:center; gap:8px; width:100%; text-align:left; font-family:var(--font-sans); font-size:13px; color:var(--color-text-primary); background:transparent; border:0; padding:7px 9px; border-radius:var(--radius-sm); cursor:pointer; }
+  .menu button:hover { background:var(--color-bg-hover); }
+  .menu .dot { width:7px; height:7px; border-radius:50%; }
+  .dgrid { display:grid; grid-template-columns:280px minmax(0,1fr) 320px; gap:16px; align-items:start; }
+  .avail { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; }
+  .avail .day { border:1px solid var(--color-border-subtle); border-radius:var(--radius-md); padding:9px; text-align:center; }
+  .avail .day .dl { font-size:10px; color:var(--color-text-tertiary); text-transform:uppercase; letter-spacing:.04em; }
+  .avail .bars { display:flex; gap:2px; justify-content:center; margin-top:6px; }
+  .avail .bars span { width:5px; height:18px; border-radius:2px; }
+  .tree-row { display:flex; align-items:center; gap:10px; padding:9px 0; border-top:1px solid var(--color-border-subtle); } .tree-row:first-child { border-top:0; }
+  .row-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-top:1px solid var(--color-border-subtle); } .row-item:first-child { border-top:0; }
+  .expert { display:flex; flex-wrap:wrap; gap:6px; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="users"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><a href="Users.html">Users</a><i data-lucide="chevron-right"></i><span class="here">Neha Kapoor</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+    <div class="scroll">
+      <div class="sheet" data-screen-label="User Detail — Neha Kapoor">
+        <div class="detail-head">
+          <span class="wrap" style="position:relative;display:inline-block"><span class="avatar lg" style="background:var(--green-600)">NK</span><span style="position:absolute;bottom:1px;right:1px;width:12px;height:12px;border-radius:50%;background:var(--color-status-active);box-shadow:0 0 0 2.5px var(--color-bg-surface)"></span></span>
+          <div class="dh-main">
+            <div class="dh-title-row">
+              <h1>Neha Kapoor</h1>
+              <span class="statuspill" id="statusPill"><span class="dot" style="background:var(--color-status-active)"></span><span id="statusLabel">Active</span><i data-lucide="chevron-down"></i></span>
+              <span class="rolepill" id="rolePill"><i data-lucide="shield" style="font-size:11px"></i><span id="roleLabel">Developer</span><i data-lucide="chevron-down" style="font-size:11px"></i></span>
+            </div>
+            <div class="dh-sub"><span class="mono">US-103</span> · Senior Developer · joined 2025-09-01</div>
+          </div>
+          <div class="spacer"></div>
+          <button class="btn btn-secondary"><i data-lucide="pencil"></i>Edit</button>
+          <button class="btn btn-secondary" id="archiveBtn" style="color:var(--color-danger-text);border-color:var(--color-danger-border)"><i data-lucide="user-x"></i>Archive</button>
+        </div>
+
+        <div class="statstrip" style="margin-bottom:18px">
+          <div class="stat"><div class="k">Active tasks</div><div class="v">5</div></div>
+          <div class="stat"><div class="k">Projects</div><div class="v">3</div><div class="s">as developer</div></div>
+          <div class="stat"><div class="k">Avg rating</div><div class="v" style="color:var(--color-success-text)">4.6</div><div class="s">last 20 tasks</div></div>
+          <div class="stat"><div class="k">Tests done</div><div class="v">38</div><div class="s">this quarter</div></div>
+          <div class="stat"><div class="k">Capacity</div><div class="v" style="color:var(--color-warning-text)">High</div><div class="s">wants more</div></div>
+        </div>
+
+        <div class="dgrid">
+          <!-- LEFT -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Profile</h3></div>
+              <div class="card-b" style="padding-top:8px">
+                <div class="meta-row"><span class="k">User ID</span><span class="mono" style="font-size:13px;color:var(--color-text-secondary)">US-103</span></div>
+                <div class="meta-row"><span class="k">Email</span><div class="ie" data-ie="text"><span class="ie-val">neha@growwstacks.com</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Phone</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">+91 98111 22045</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">WhatsApp</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">+91 98111 22045</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Teams ID</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">neha.k@gs</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Job title</span><div class="ie" data-ie="text"><span class="ie-val">Senior Developer</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Shift</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">11:00–20:00 IST</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Tech expertise</h3></div>
+              <div class="card-b">
+                <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:7px">Expert</div>
+                <div class="expert" style="margin-bottom:12px"><span class="tag" style="background:var(--color-accent-subtle);color:var(--color-accent-text);border-color:var(--color-accent-border)">n8n</span><span class="tag" style="background:var(--color-accent-subtle);color:var(--color-accent-text);border-color:var(--color-accent-border)">Node.js</span><span class="tag" style="background:var(--color-accent-subtle);color:var(--color-accent-text);border-color:var(--color-accent-border)">HubSpot API</span></div>
+                <div style="font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--color-text-tertiary);margin-bottom:7px">Intermediate</div>
+                <div class="expert"><span class="tag">PostgreSQL</span><span class="tag">Slack API</span><span class="tag">Python</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CENTER -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>3-day availability</h3><span style="margin-left:auto;font-size:11px;color:var(--color-text-tertiary)">requested 2 more projects</span></div>
+              <div class="card-b">
+                <div class="avail">
+                  <div class="day"><div class="dl">Today</div><div class="bars"><span style="background:var(--color-success-solid)"></span><span style="background:var(--color-success-solid)"></span><span style="background:var(--color-bg-active)"></span></div><div style="font-size:11px;color:var(--color-text-secondary);margin-top:6px">~2h free</div></div>
+                  <div class="day"><div class="dl">Tomorrow</div><div class="bars"><span style="background:var(--color-success-solid)"></span><span style="background:var(--color-bg-active)"></span><span style="background:var(--color-bg-active)"></span></div><div style="font-size:11px;color:var(--color-text-secondary);margin-top:6px">~5h free</div></div>
+                  <div class="day"><div class="dl">Day after</div><div class="bars"><span style="background:var(--color-bg-active)"></span><span style="background:var(--color-bg-active)"></span><span style="background:var(--color-bg-active)"></span></div><div style="font-size:11px;color:var(--color-text-secondary);margin-top:6px">open</div></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><i data-lucide="git-fork" style="color:var(--color-text-tertiary)"></i><h3>Working on</h3><span class="cnt">3 projects · 5 tasks</span></div>
+              <div class="card-b" style="padding:6px 14px">
+                <a href="index.html" class="tree-row" style="text-decoration:none"><i data-lucide="kanban" style="color:var(--color-text-tertiary)"></i><div style="flex:1"><div style="font-size:13.5px;font-weight:500;color:var(--color-text-primary)">Lead-routing automation</div><div style="font-size:11px;color:var(--color-text-tertiary)">M4 · 2 tasks</div></div><span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span></a>
+                <a href="index.html" class="tree-row" style="text-decoration:none"><i data-lucide="kanban" style="color:var(--color-text-tertiary)"></i><div style="flex:1"><div style="font-size:13.5px;font-weight:500;color:var(--color-text-primary)">Support copilot</div><div style="font-size:11px;color:var(--color-text-tertiary)">M1 · 1 task</div></div><span class="status" style="background:var(--color-success-bg);color:var(--color-success-text);border-color:transparent">Delivered</span></a>
+                <a href="index.html" class="tree-row" style="text-decoration:none"><i data-lucide="kanban" style="color:var(--color-text-tertiary)"></i><div style="flex:1"><div style="font-size:13.5px;font-weight:500;color:var(--color-text-primary)">Slack ops bot</div><div style="font-size:11px;color:var(--color-text-tertiary)">M3 · 2 tasks</div></div><span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span></a>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><i data-lucide="square-check" style="color:var(--color-text-tertiary)"></i><h3>Assigned tasks</h3><span class="cnt">5</span></div>
+              <div class="card-b" style="padding:6px 14px">
+                <a href="Task Detail.html" class="row-item" style="text-decoration:none;padding:9px 0"><div style="flex:1"><div style="font-size:13.5px;font-weight:500;color:var(--color-text-primary)">Handle duplicate-lead collision</div><div style="font-size:11px;color:var(--color-text-tertiary)">Lead-routing · M4</div></div><span class="schedule" style="background:var(--color-warning-bg);color:var(--color-warning-text);border:1px solid var(--color-warning-border)">Due 1d</span></a>
+                <a href="Task Detail.html" class="row-item" style="text-decoration:none;padding:9px 0"><div style="flex:1"><div style="font-size:13.5px;font-weight:500;color:var(--color-text-primary)">Notification copy + tone pass</div><div style="font-size:11px;color:var(--color-text-tertiary)">Lead-routing · M4</div></div><span class="status">To-do</span></a>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="stack">
+            <div class="card ai-card">
+              <div class="card-h" style="border-bottom:0;padding-bottom:4px"><i data-lucide="sparkles" class="ic-fill" style="color:var(--color-accent)"></i><h3>AI Supervisor</h3></div>
+              <div class="card-b" style="padding-top:6px;display:flex;flex-direction:column;gap:8px">
+                <div class="insight"><i data-lucide="trending-up" style="color:var(--color-ai-positive)"></i><p>Strong performer — 4.6★ average, fastest test turnaround on the team.</p></div>
+                <div class="insight"><i data-lucide="info" style="color:var(--color-ai-neutral)"></i><p>Has capacity this week and asked for more — a good candidate for the next project.</p></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Time spent</h3><span style="margin-left:auto;font-size:11px;color:var(--color-text-tertiary)">aggregate (PM view)</span></div>
+              <div class="card-b">
+                <div style="display:flex;justify-content:space-between;padding:6px 0;font-size:13px"><span style="color:var(--color-text-secondary)">Today</span><span class="mono" style="font-weight:500">6.5h</span></div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--color-border-subtle);font-size:13px"><span style="color:var(--color-text-secondary)">This week</span><span class="mono" style="font-weight:500">28h</span></div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--color-border-subtle);font-size:13px"><span style="color:var(--color-text-secondary)">This month</span><span class="mono" style="font-weight:500">112h</span></div>
+                <div style="display:flex;justify-content:space-between;padding:6px 0;border-top:1px solid var(--color-border-subtle);font-size:13px"><span style="color:var(--color-text-secondary)">This quarter</span><span class="mono" style="font-weight:500">340h</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Notes</h3><span class="cnt">1</span><button class="btn btn-ghost btn-sm more" style="padding:4px 8px"><i data-lucide="plus"></i>Add</button></div>
+              <div class="card-b"><div style="border-left:2px solid var(--color-accent-border);padding-left:12px"><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.5">Best on integration-heavy work. Prefers async; keep meetings to the afternoon overlap.</div><div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">Priya M. · 2026-05-12</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg"></span></div>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="inline-edit.js"></script>
+<script>
+var STATUSES = [['Active','var(--color-status-active)'],['Away','var(--color-status-away)'],['Left org','var(--color-status-left)']];
+var ROLES = [['Admin'],['PM'],['Developer'],['Finance']];
+if (window.lucide) lucide.createIcons();
+initInlineEdit();
+document.getElementById('navToggle').onclick=function(){ document.getElementById('app').classList.toggle('collapsed'); };
+
+function menuFor(anchor, opts, onPick){
+  return function(e){
+    e.stopPropagation(); if(window.__m){ window.__m.remove(); window.__m=null; return; }
+    var m=document.createElement('div'); m.className='menu';
+    m.innerHTML=opts.map(function(o){ return '<button data-v="'+o[0]+'">'+(o[1]?'<span class="dot" style="background:'+o[1]+'"></span>':'')+o[0]+'</button>'; }).join('');
+    document.body.appendChild(m); var r=anchor.getBoundingClientRect(); m.style.top=(r.bottom+6)+'px'; m.style.left=r.left+'px'; window.__m=m;
+    m.addEventListener('click',function(ev){ var b=ev.target.closest('button'); if(!b)return; onPick(b.dataset.v); if(window.__m){window.__m.remove();window.__m=null;} });
+  };
+}
+var statusPill=document.getElementById('statusPill');
+statusPill.addEventListener('click', menuFor(statusPill, STATUSES, function(v){ var s=STATUSES.find(function(x){return x[0]===v;}); statusPill.querySelector('.dot').style.background=s[1]; document.getElementById('statusLabel').textContent=v; gsToast('Status saved · '+v); }));
+var rolePill=document.getElementById('rolePill');
+rolePill.addEventListener('click', menuFor(rolePill, ROLES, function(v){ document.getElementById('roleLabel').textContent=v; gsToast('Role updated · '+v+' (admin action logged)'); }));
+document.addEventListener('click', function(){ if(window.__m){ window.__m.remove(); window.__m=null; } });
+
+document.getElementById('archiveBtn').addEventListener('click', function(){
+  var ok = confirm('Archive Neha Kapoor?\n\nThis revokes all access immediately (the kill switch). Their work history is kept; they can be restored by an admin.');
+  if(ok) gsToast('User archived · access revoked · logged');
+});
+</script>
+</body>
+</html>

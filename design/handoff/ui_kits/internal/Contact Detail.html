@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Ravi Menon</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .detail-head { display: flex; align-items: center; gap: 16px; margin-bottom: 18px; }
+  .dh-main { min-width: 0; }
+  .dh-title-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .dh-title-row h1 { font-family: var(--font-display); font-size: 28px; font-weight: 700; letter-spacing: -.02em; }
+  .dh-sub { font-size: 13px; color: var(--color-text-tertiary); margin-top: 5px; }
+  .dh-sub a { font-weight: 500; }
+  .dh-ltv { text-align: right; padding: 8px 18px; border-left: 1px solid var(--color-border-subtle); }
+  .dh-ltv .k { font-size: 10px; letter-spacing: .08em; text-transform: uppercase; color: var(--color-text-tertiary); }
+  .dh-ltv .v { font-family: var(--font-mono); font-size: 26px; font-weight: 600; color: var(--color-text-primary); line-height: 1.1; }
+
+  .statuspill { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; font-weight: 600; padding: 5px 12px; border-radius: var(--radius-full); border: 1px solid var(--color-border-default); background: var(--color-bg-surface); cursor: pointer; transition: border-color var(--dur-fast); white-space: nowrap; }
+  .statuspill:hover { border-color: var(--color-border-strong); }
+  .statuspill .dot { width: 7px; height: 7px; border-radius: 50%; }
+  .statuspill i { font-size: 13px; color: var(--color-text-muted); }
+
+  .menu { position: absolute; z-index: 40; background: var(--color-bg-surface-raised); border: 1px solid var(--color-border-subtle); border-radius: var(--radius-md); box-shadow: var(--shadow-lg); padding: 5px; min-width: 180px; }
+  .menu button { display: flex; align-items: center; gap: 8px; width: 100%; text-align: left; font-family: var(--font-sans); font-size: 13px; color: var(--color-text-primary); background: transparent; border: 0; padding: 7px 9px; border-radius: var(--radius-sm); cursor: pointer; }
+  .menu button:hover { background: var(--color-bg-hover); }
+  .menu .dot { width: 7px; height: 7px; border-radius: 50%; }
+
+  .dgrid { display: grid; grid-template-columns: 270px minmax(0, 1fr) 326px; gap: 16px; align-items: start; }
+  .conv-card { display: flex; flex-direction: column; height: calc(100vh - 230px); min-height: 560px; }
+  .conv-card .thread { flex: 1; }
+  .multi { display: flex; align-items: center; }
+  .multi .add { width: 26px; height: 26px; border-radius: 50%; border: 1px dashed var(--color-border-strong); display: inline-flex; align-items: center; justify-content: center; color: var(--color-text-muted); cursor: pointer; }
+  .multi .add:hover { border-color: var(--color-accent); color: var(--color-accent); }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="contacts"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle" title="Collapse nav"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><a href="Contacts.html">Contacts</a><i data-lucide="chevron-right"></i><span class="here">Ravi Menon</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+
+    <div class="scroll">
+      <div class="sheet" data-screen-label="Contact Detail — Ravi Menon">
+
+        <!-- HEADER -->
+        <div class="detail-head">
+          <span class="avatar lg" style="background:var(--iris-600)">RM</span>
+          <div class="dh-main">
+            <div class="dh-title-row">
+              <h1>Ravi Menon</h1>
+              <span class="statuspill" id="statusPill"><span class="dot" style="background:var(--iris-500)"></span><span id="statusLabel">Active Client</span><i data-lucide="chevron-down"></i></span>
+              <span class="rating great">Great</span>
+            </div>
+            <div class="dh-sub">Head of Operations · <a href="#">Acme Robotics Pvt Ltd</a> · Created 2026-01-12 · Updated 2h ago</div>
+          </div>
+          <div class="spacer"></div>
+          <div class="dh-ltv"><div class="k">Lifetime value</div><div class="v">₹18.0L</div></div>
+          <button class="btn btn-secondary"><i data-lucide="pencil"></i>Edit</button>
+          <button class="btn btn-primary"><i data-lucide="plus"></i>Create</button>
+        </div>
+
+        <div class="dgrid">
+
+          <!-- LEFT META -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Contact details</h3></div>
+              <div class="card-b" style="padding-top:8px">
+                <div class="meta-row"><span class="k">Contact ID</span><span class="mono" style="font-size:13px;color:var(--color-text-secondary)">CT-101</span></div>
+                <div class="meta-row"><span class="k">Company</span><div class="ie" data-ie="static"><a href="#" style="font-size:14px">Acme Robotics Pvt Ltd</a></div></div>
+                <div class="meta-row"><span class="k">Email</span><div class="ie" data-ie="text"><span class="ie-val">ravi@acme-robotics.in</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Phone</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">+91 98200 11234</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">WhatsApp</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">+91 98200 11234</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Slack ID</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">U04RM9K2X</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Main platform</span><div class="ie" data-ie="text"><span class="ie-val">WhatsApp</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Location</span><div class="ie" data-ie="text"><span class="ie-val">Mumbai, Maharashtra · India</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Contact owners</span>
+                  <div class="multi" style="margin-top:4px">
+                    <div class="ostack">
+                      <span class="wrap"><span class="avatar" style="background:var(--iris-600)">AR</span><span class="sdot" style="background:var(--color-status-active)"></span></span>
+                      <span class="wrap"><span class="avatar" style="background:var(--sky-600)">PM</span><span class="sdot" style="background:var(--color-status-active)"></span></span>
+                    </div>
+                    <span class="add" style="margin-left:4px"><i data-lucide="plus" style="font-size:13px"></i></span>
+                  </div>
+                </div>
+                <div class="meta-row"><span class="k">Lead source</span>
+                  <div class="tag-row" style="margin-top:4px"><span class="tag">Upwork Direct</span><span class="tag">Referral</span><span class="add" style="width:22px;height:22px"><i data-lucide="plus" style="font-size:12px"></i></span></div>
+                </div>
+                <div class="meta-row"><span class="k">Teams channel · ID</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">Acme · 19:b8f…</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+              </div>
+            </div>
+
+            <!-- Credentials -->
+            <div class="card">
+              <div class="card-h"><h3>Credentials</h3><span class="badge" style="background:var(--color-warning-bg);color:var(--color-warning-text);font-size:9px;border:1px solid var(--color-warning-border)"><i data-lucide="lock" style="font-size:11px"></i>Restricted</span></div>
+              <div class="card-b">
+                <div class="cred" style="margin-bottom:12px">
+                  <span class="lock"><i data-lucide="key-round"></i></span>
+                  <div style="flex:1"><div style="font-size:13px;font-weight:500">3 encrypted credentials</div><div style="font-size:11px;color:var(--color-text-tertiary)">HubSpot key · SMTP · staging login</div></div>
+                </div>
+                <button class="btn btn-secondary btn-sm" id="revealCreds" style="width:100%;justify-content:center"><i data-lucide="eye"></i>Reveal & log access</button>
+              </div>
+            </div>
+
+            <!-- Attachments -->
+            <div class="card">
+              <div class="card-h"><h3>Attachments</h3><span class="cnt">2 files</span><span class="cnt">1 link</span></div>
+              <div class="card-b" style="padding:6px">
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm)"><i data-lucide="file-text" style="font-size:18px;color:var(--color-danger-fg)"></i><div class="t"><div class="l1">Acme_SOW_v3.pdf</div><div class="l2 mono">PDF · 2.4 MB</div></div><i data-lucide="download" style="color:var(--color-text-tertiary)"></i></div>
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm);border-top:0"><i data-lucide="link" style="font-size:18px;color:var(--color-accent)"></i><div class="t"><div class="l1">Staging environment</div><div class="l2 mono">acme-staging.app</div></div><i data-lucide="external-link" style="color:var(--color-text-tertiary)"></i></div>
+                <div style="margin:6px 8px 4px;border:1.5px dashed var(--color-border-default);border-radius:var(--radius-md);padding:9px;text-align:center;font-size:11px;color:var(--color-text-tertiary);display:flex;align-items:center;justify-content:center;gap:6px"><i data-lucide="upload" style="font-size:14px"></i>Drop file · <span style="color:var(--color-accent-text);font-weight:500">+ link</span></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CENTER · CONVERSATION (center of gravity) -->
+          <div class="card conv-card">
+            <div style="padding:12px 14px;border-bottom:1px solid var(--color-border-subtle)">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px"><i data-lucide="messages-square" style="color:var(--color-text-tertiary)"></i><h3 style="font-family:var(--font-sans);font-size:13px;font-weight:700">Conversation</h3><span class="cnt">24 messages · 5 channels</span></div>
+              <div class="chips" id="chips">
+                <span class="chip active" data-ch="all">All</span>
+                <span class="chip" data-ch="wa"><span class="dot" style="background:var(--ch-whatsapp)"></span>WhatsApp</span>
+                <span class="chip" data-ch="gmail"><span class="dot" style="background:var(--ch-gmail)"></span>Gmail</span>
+                <span class="chip" data-ch="slack"><span class="dot" style="background:var(--ch-slack)"></span>Slack</span>
+                <span class="chip" data-ch="call"><span class="dot" style="background:var(--ch-phone)"></span>Calls</span>
+                <span class="chip" data-ch="upwork"><span class="dot" style="background:var(--ch-upwork)"></span>Upwork</span>
+              </div>
+            </div>
+            <div class="thread" id="thread">
+              <div class="day">Mon 25 May</div>
+              <div class="msg-in"><span class="av-sm" style="background:var(--ch-upwork)">RM</span><div><div class="bubble-in">Hi! Saw your automation portfolio on Upwork — we need lead routing between HubSpot and Slack. Can you take this on?</div><div class="msg-meta"><span class="dot" style="background:var(--ch-upwork)"></span>Upwork · Ravi M. · 10:18</div></div></div>
+              <div class="msg-out"><div><div class="bubble-out">Absolutely — that's right in our wheelhouse. Let's set up a quick discovery call this week?</div><div class="msg-meta" style="justify-content:flex-end"><span class="dot" style="background:var(--ch-upwork)"></span>You · 10:42 · <i data-lucide="check-check" style="color:var(--color-info-fg)"></i></div></div></div>
+              <div class="callcard">
+                <div style="width:34px;height:34px;border-radius:var(--radius-md);background:var(--color-info-bg);display:flex;align-items:center;justify-content:center;flex:none"><i data-lucide="phone" class="ic-fill" style="color:var(--color-info-solid)"></i></div>
+                <div style="flex:1"><div style="font-size:13px;font-weight:600">Discovery call · 32 min</div><div style="font-size:11px;color:var(--color-text-tertiary)">Zoom · Arjun, Priya, 2 from Acme</div></div>
+                <a class="badge" style="background:var(--color-bg-subtle);color:var(--color-text-secondary);font-size:9px" href="#"><i data-lucide="play" class="ic-fill" style="font-size:11px"></i>Recording</a>
+                <a class="badge" style="background:var(--color-ai-tint);color:var(--color-accent-text);font-size:9px" href="#"><i data-lucide="sparkles" style="font-size:11px"></i>AI summary</a>
+              </div>
+              <div class="day">Yesterday</div>
+              <div class="msg-in"><span class="av-sm" style="background:var(--ch-whatsapp)">RM</span><div><div class="bubble-in">Hey — any update on the revised scope doc?</div><div class="msg-meta"><span class="dot" style="background:var(--ch-whatsapp)"></span>WhatsApp · Ravi M. · 9:14</div></div></div>
+              <div class="msg-out"><div><div class="bubble-out">On it — sending the updated SOW by EOD today.</div><div class="msg-meta" style="justify-content:flex-end"><span class="dot" style="background:var(--ch-whatsapp)"></span>You · 9:31 · <i data-lucide="check-check" style="color:var(--color-info-fg)"></i></div></div></div>
+              <div class="day">Today</div>
+              <div class="msg-in"><span class="av-sm" style="background:var(--ch-gmail)">RM</span><div><div class="bubble-in">Got it, thanks. Reviewing with the team now — will confirm milestone 4 scope by tomorrow.</div><div class="msg-meta"><span class="dot" style="background:var(--ch-gmail)"></span>Gmail · Ravi M. · 11:02</div></div></div>
+            </div>
+            <div class="composer">
+              <button class="icon-btn" style="width:30px;height:30px" title="Channel"><span class="dot" style="width:8px;height:8px;border-radius:50%;background:var(--ch-whatsapp);display:inline-block"></span></button>
+              <input class="inp" id="composerInput" placeholder="Reply via WhatsApp…">
+              <button class="icon-btn" style="width:30px;height:30px"><i data-lucide="paperclip"></i></button>
+              <button class="btn btn-primary btn-sm" id="sendBtn" style="padding:8px 10px"><i data-lucide="send"></i></button>
+            </div>
+          </div>
+
+          <!-- RIGHT RAIL -->
+          <div class="stack">
+            <div class="card ai-card">
+              <div class="card-h" style="border-bottom:0;padding-bottom:4px"><i data-lucide="sparkles" class="ic-fill" style="color:var(--color-accent)"></i><h3>AI Supervisor</h3><span style="margin-left:auto;font-size:10px;color:var(--color-text-muted)">on Ravi</span></div>
+              <div class="card-b" style="padding-top:6px;display:flex;flex-direction:column;gap:8px">
+                <div class="insight"><i data-lucide="trending-up" style="color:var(--color-ai-positive)"></i><p>Pays early every time — lowest payment risk of any active client.</p></div>
+                <div class="insight"><i data-lucide="info" style="color:var(--color-ai-neutral)"></i><p>Usually replies within a day; quick to give feedback on demos.</p></div>
+                <div class="insight"><i data-lucide="triangle-alert" style="color:var(--color-ai-risk)"></i><p>2 tasks await his input (milestone 4 scope) — 8 days now. A nudge would unblock delivery.</p></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Projects</h3><span class="cnt">2 active · 5 total</span><a href="index.html" class="more" style="font-size:12px;font-weight:600">View all</a></div>
+              <div class="card-b" style="padding:6px 14px">
+                <a href="index.html" class="sum" style="text-decoration:none"><i data-lucide="kanban" style="color:var(--color-text-tertiary)"></i><div class="t"><div class="l1">Lead-routing automation</div><div class="l2">PRJ-0418</div></div><span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span></a>
+                <div class="sum"><i data-lucide="kanban" style="color:var(--color-text-tertiary)"></i><div class="t"><div class="l1">Onboarding chatbot</div><div class="l2">PRJ-0392</div></div><span class="status"><span class="dot" style="background:var(--sky-500)"></span>QA Review</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Open milestones</h3><span class="cnt">2</span></div>
+              <div class="card-b" style="padding:6px 14px">
+                <div class="sum"><span class="ms-num" style="width:24px;height:24px;background:var(--color-accent-subtle);color:var(--color-accent-text);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:600;flex:none">4</span><div class="t"><div class="l1">Slack notifications</div></div><span class="schedule" style="background:var(--color-warning-bg);color:var(--color-warning-text);border:1px solid var(--color-warning-border)">Due 3d</span></div>
+                <div class="sum"><span class="ms-num" style="width:24px;height:24px;background:var(--color-bg-subtle);color:var(--color-text-tertiary);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:11px;font-weight:600;flex:none">5</span><div class="t"><div class="l1">QA & edge cases</div></div><span class="status">Not started</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Active tasks</h3><span class="cnt">3</span></div>
+              <div class="card-b" style="padding:6px 14px">
+                <div class="sum"><span class="check" style="width:16px;height:16px;border:1.5px solid var(--color-border-strong);border-radius:4px;flex:none"></span><div class="t"><div class="l1">Confirm milestone 4 scope</div><div class="l2">T-7733 · awaiting client</div></div><span class="schedule" style="background:var(--color-warning-bg);color:var(--color-warning-text);border:1px solid var(--color-warning-border)">Due 2d</span></div>
+                <div class="sum"><span class="check" style="width:16px;height:16px;border:1.5px solid var(--color-border-strong);border-radius:4px;flex:none"></span><div class="t"><div class="l1">Send revised SOW</div><div class="l2">T-7734 · Neha K.</div></div><span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span></div>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Deals</h3><span class="cnt">1</span></div>
+              <div class="card-b" style="padding:6px 14px">
+                <a href="Deals.html" class="sum" style="text-decoration:none"><i data-lucide="handshake" style="color:var(--color-text-tertiary)"></i><div class="t"><div class="l1">Annual retainer</div><div class="l2 mono">DEAL-2418 · ₹18.0L</div></div><span class="status" style="background:var(--color-success-bg);color:var(--color-success-text);border-color:transparent">Won</span></a>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-h"><h3>Notes</h3><span class="cnt">2</span><button class="btn btn-ghost btn-sm more" style="padding:4px 8px"><i data-lucide="plus"></i>Add</button></div>
+              <div class="card-b">
+                <div style="border-left:2px solid var(--color-accent-border);padding-left:12px">
+                  <div style="font-weight:600;font-size:13px;margin-bottom:3px">Decision-maker</div>
+                  <div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.5">Ravi signs off on scope directly — no procurement layer. Keep updates <b>short and visual</b>.</div>
+                  <div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">Arjun R. · 2026-05-21</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg"></span></div>
+
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="inline-edit.js"></script>
+<script>
+const STATUSES = [['Prospect','var(--sky-500)'],['Active Client','var(--iris-500)'],['Partner','var(--green-500)'],['On Hold','var(--amber-500)'],['Churned','var(--n-400)']];
+gsIcons();
+initInlineEdit();
+document.getElementById('navToggle').onclick = function(){ document.getElementById('app').classList.toggle('collapsed'); };
+
+// channel chips
+document.getElementById('chips').addEventListener('click', function(e){
+  const chip = e.target.closest('.chip'); if (!chip) return;
+  document.querySelectorAll('.chip').forEach(function(c){ c.classList.remove('active'); });
+  chip.classList.add('active');
+});
+
+// composer
+function send(){
+  const inp = document.getElementById('composerInput'); const v = inp.value.trim(); if (!v) return;
+  const thread = document.getElementById('thread');
+  const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+  const el = document.createElement('div'); el.className = 'msg-out';
+  el.innerHTML = '<div><div class="bubble-out">' + v.replace(/</g, '&lt;') + '</div><div class="msg-meta" style="justify-content:flex-end"><span class="dot" style="background:var(--ch-whatsapp)"></span>You · ' + now + ' · <i data-lucide="check-check" style="color:var(--color-info-fg)"></i></div></div>';
+  thread.appendChild(el); inp.value = ''; thread.scrollTop = thread.scrollHeight; gsIcons();
+}
+document.getElementById('sendBtn').onclick = send;
+document.getElementById('composerInput').addEventListener('keydown', function(e){ if (e.key === 'Enter') send(); });
+
+// status enum inline-edit (popover)
+const pill = document.getElementById('statusPill');
+let openMenu = null;
+function closeMenu(){ if (openMenu) { openMenu.remove(); openMenu = null; } }
+pill.addEventListener('click', function(e){
+  e.stopPropagation();
+  if (openMenu) { closeMenu(); return; }
+  const m = document.createElement('div'); m.className = 'menu';
+  m.innerHTML = STATUSES.map(function(s){ return '<button data-s="' + s[0] + '"><span class="dot" style="background:' + s[1] + '"></span>' + s[0] + '</button>'; }).join('');
+  document.body.appendChild(m);
+  const r = pill.getBoundingClientRect();
+  m.style.top = (r.bottom + 6) + 'px'; m.style.left = r.left + 'px';
+  openMenu = m;
+  m.addEventListener('click', function(ev){
+    const b = ev.target.closest('button'); if (!b) return;
+    const s = STATUSES.find(function(x){ return x[0] === b.dataset.s; });
+    pill.querySelector('.dot').style.background = s[1];
+    document.getElementById('statusLabel').textContent = s[0];
+    closeMenu(); gsToast('Status saved · ' + s[0]);
+  });
+});
+document.addEventListener('click', closeMenu);
+
+// credentials reveal (logged)
+document.getElementById('revealCreds').addEventListener('click', function(){ gsToast('Access logged · revealing credentials…'); });
+</script>
+</body>
+</html>

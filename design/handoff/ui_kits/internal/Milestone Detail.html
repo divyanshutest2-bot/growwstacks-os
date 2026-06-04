@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GrowwStacks OS — Milestone</title>
+<link rel="stylesheet" href="../../colors_and_type.css">
+<link rel="stylesheet" href="shell.css">
+<style>
+  .detail-head { display:flex; align-items:center; gap:16px; margin-bottom:16px; }
+  .msq { width:48px; height:48px; border-radius:var(--radius-lg); display:flex; align-items:center; justify-content:center; font-family:var(--font-mono); font-size:18px; font-weight:700; flex:none; background:var(--color-accent-subtle); color:var(--color-accent-text); }
+  .dh-main { min-width:0; }
+  .dh-title-row { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+  .dh-title-row h1 { font-family:var(--font-display); font-size:26px; font-weight:700; letter-spacing:-.02em; }
+  .dh-sub { font-size:13px; color:var(--color-text-tertiary); margin-top:5px; }
+  .dh-sub a { font-weight:500; }
+  .statuspill { display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; padding:5px 12px; border-radius:var(--radius-full); border:1px solid var(--color-border-default); background:var(--color-bg-surface); cursor:pointer; white-space:nowrap; }
+  .statuspill:hover { border-color:var(--color-border-strong); }
+  .statuspill .dot { width:7px; height:7px; border-radius:50%; }
+  .statuspill i { font-size:13px; color:var(--color-text-muted); }
+  .menu { position:absolute; z-index:40; background:var(--color-bg-surface-raised); border:1px solid var(--color-border-subtle); border-radius:var(--radius-md); box-shadow:var(--shadow-lg); padding:5px; min-width:170px; }
+  .menu button { display:flex; align-items:center; gap:8px; width:100%; text-align:left; font-family:var(--font-sans); font-size:13px; color:var(--color-text-primary); background:transparent; border:0; padding:7px 9px; border-radius:var(--radius-sm); cursor:pointer; }
+  .menu button:hover { background:var(--color-bg-hover); }
+  .menu .dot { width:7px; height:7px; border-radius:50%; }
+  .dgrid { display:grid; grid-template-columns:270px minmax(0,1fr) 320px; gap:16px; align-items:start; }
+  .row-item { display:flex; align-items:center; gap:12px; padding:11px 14px; border-top:1px solid var(--color-border-subtle); }
+  .row-item:first-child { border-top:0; }
+  .row-item:hover { background:var(--color-bg-hover); }
+  .check { width:18px; height:18px; border-radius:var(--radius-sm); border:1.5px solid var(--color-border-strong); display:flex; align-items:center; justify-content:center; flex:none; color:#fff; }
+  .check.done { background:var(--color-success-solid); border-color:var(--color-success-solid); }
+  .check.done i { display:block; } .check i { display:none; font-size:12px; }
+  .test-row { display:flex; align-items:center; gap:10px; padding:9px 14px; border-top:1px solid var(--color-border-subtle); font-size:13px; }
+  .test-row:first-child { border-top:0; }
+  .compbig { font-family:var(--font-display); font-size:36px; font-weight:800; color:var(--color-accent-text); line-height:1; }
+  .readonly-tag { font-size:10px; color:var(--color-text-muted); display:inline-flex; align-items:center; gap:3px; }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <aside id="sidebar" data-active="milestones"></aside>
+  <div class="main">
+    <div class="topbar">
+      <button class="icon-btn" id="navToggle"><i data-lucide="panel-left"></i></button>
+      <nav class="crumb"><a href="Milestones.html">Milestones</a><i data-lucide="chevron-right"></i><span class="here">M4 · Slack notifications</span></nav>
+      <div class="spacer"></div>
+      <div class="search"><i data-lucide="search" style="font-size:15px"></i>Search…</div>
+      <button class="icon-btn"><i data-lucide="bell"></i></button>
+    </div>
+    <div class="scroll">
+      <div class="sheet" data-screen-label="Milestone Detail — M4 Slack notifications">
+        <div class="detail-head">
+          <span class="msq">M4</span>
+          <div class="dh-main">
+            <div class="dh-title-row">
+              <h1>Slack notifications</h1>
+              <span class="statuspill" id="statusPill"><span class="dot" style="background:var(--iris-500)"></span><span id="statusLabel">In Progress</span><i data-lucide="chevron-down"></i></span>
+              <span class="schedule" style="background:var(--color-warning-bg);color:var(--color-warning-text);border:1px solid var(--color-warning-border)"><i data-lucide="clock" style="font-size:13px"></i>Due in 3d</span>
+            </div>
+            <div class="dh-sub"><span class="mono">MS-102</span> · <a href="index.html">Lead-routing automation</a> · <a href="Company Detail.html">Acme Robotics</a> · target 2026-06-06</div>
+          </div>
+          <div class="spacer"></div>
+          <button class="btn btn-secondary"><i data-lucide="pencil"></i>Edit</button>
+          <button class="btn btn-primary"><i data-lucide="plus"></i>Add task</button>
+        </div>
+
+        <div class="statstrip" style="margin-bottom:18px">
+          <div class="stat"><div class="k">Completion</div><div class="v" style="color:var(--color-accent-text)">55%</div><div class="s">by task count</div></div>
+          <div class="stat"><div class="k">Tasks</div><div class="v">2 / 4</div><div class="s">done</div></div>
+          <div class="stat"><div class="k">Hours</div><div class="v">18 / 24</div><div class="s">spent / est</div></div>
+          <div class="stat"><div class="k">Value</div><div class="v">₹3.5L</div></div>
+          <div class="stat"><div class="k">Received</div><div class="v" style="color:var(--color-warning-text)">₹0</div><div class="s">on delivery</div></div>
+        </div>
+
+        <div class="dgrid">
+          <!-- LEFT -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><h3>Milestone details</h3></div>
+              <div class="card-b" style="padding-top:8px">
+                <div class="meta-row"><span class="k">Milestone ID</span><span class="mono" style="font-size:13px;color:var(--color-text-secondary)">MS-102</span></div>
+                <div class="meta-row"><span class="k">Project</span><div class="ie" data-ie="static"><a href="index.html" style="font-size:14px">Lead-routing automation</a></div></div>
+                <div class="meta-row"><span class="k">Completion</span><div style="display:flex;align-items:center;gap:8px;font-size:14px;color:var(--color-text-primary)">55% <span class="readonly-tag"><i data-lucide="lock" style="font-size:11px"></i>from tasks</span></div></div>
+                <div class="meta-row"><span class="k">Target date</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:13px">2026-06-06</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Value</span><div class="ie" data-ie="text"><span class="ie-val mono" style="font-size:14px;font-weight:600">₹3,50,000</span><i data-lucide="pencil" class="ie-pencil"></i></div></div>
+                <div class="meta-row"><span class="k">Managers</span>
+                  <div class="ostack" style="margin-top:4px"><span class="wrap" style="position:relative"><span class="avatar" style="background:var(--green-600)">NK</span><span style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:var(--color-status-active);box-shadow:0 0 0 2px var(--color-bg-surface)"></span></span><span class="wrap" style="position:relative"><span class="avatar" style="background:var(--amber-500)">DV</span><span style="position:absolute;bottom:-1px;right:-1px;width:9px;height:9px;border-radius:50%;background:var(--color-status-away);box-shadow:0 0 0 2px var(--color-bg-surface)"></span></span></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Attachments</h3><span class="cnt">2 files</span></div>
+              <div class="card-b" style="padding:6px">
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm)"><i data-lucide="file-text" style="font-size:18px;color:var(--color-info-fg)"></i><div class="t"><div class="l1">Slack_payload_spec.md</div><div class="l2 mono">MD · 12 KB</div></div><i data-lucide="download" style="color:var(--color-text-tertiary)"></i></div>
+                <div class="sum" style="padding:8px;border-radius:var(--radius-sm);border-top:0"><i data-lucide="image" style="font-size:18px;color:var(--color-accent)"></i><div class="t"><div class="l1">notification-mockups.png</div><div class="l2 mono">PNG · 240 KB</div></div><i data-lucide="download" style="color:var(--color-text-tertiary)"></i></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CENTER -->
+          <div class="stack">
+            <div class="card">
+              <div class="card-h"><i data-lucide="square-check" style="color:var(--color-text-tertiary)"></i><h3>Tasks</h3><span class="cnt">2 / 4 done</span></div>
+              <div id="taskList"></div>
+            </div>
+            <div class="card">
+              <div class="card-h"><i data-lucide="flask-conical" style="color:var(--color-text-tertiary)"></i><h3>Tests</h3><span class="cnt">dev 2/3 · UAT 1/2</span></div>
+              <div id="testList"></div>
+            </div>
+          </div>
+
+          <!-- RIGHT -->
+          <div class="stack">
+            <div class="card ai-card">
+              <div class="card-h" style="border-bottom:0;padding-bottom:4px"><i data-lucide="sparkles" class="ic-fill" style="color:var(--color-accent)"></i><h3>AI Supervisor</h3></div>
+              <div class="card-b" style="padding-top:6px;display:flex;flex-direction:column;gap:8px">
+                <div class="insight"><i data-lucide="info" style="color:var(--color-ai-neutral)"></i><p>18 of 24 estimated hours used at 55% complete — slightly over pace. Worth a margin glance, not a worry.</p></div>
+                <div class="insight"><i data-lucide="triangle-alert" style="color:var(--color-ai-risk)"></i><p>One UAT test failing (notification copy). Quick fix before this can ship.</p></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Completion</h3></div>
+              <div class="card-b">
+                <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px"><span class="compbig">55%</span><span style="font-size:13px;color:var(--color-text-tertiary)">2 / 4 tasks</span></div>
+                <div style="height:8px;border-radius:999px;background:var(--color-bg-active);overflow:hidden;margin-bottom:6px"><div style="width:55%;height:100%;background:var(--color-accent);border-radius:999px"></div></div>
+                <div style="font-size:11px;color:var(--color-text-muted);line-height:1.4">Derived from task count. Hours (18/24) are a separate effort signal, not completion.</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Billing</h3><span style="margin-left:auto;font-family:var(--font-mono);font-size:11px;color:var(--color-text-tertiary)">on delivery</span></div>
+              <div class="card-b">
+                <div style="display:flex;justify-content:space-between;padding:5px 0;font-size:13px"><span style="color:var(--color-text-secondary)">Agreed</span><span class="mono" style="font-weight:500">₹3.50L</span></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 0;border-top:1px solid var(--color-border-subtle);font-size:13px"><span style="color:var(--color-text-secondary)">Outstanding</span><span class="mono" style="font-weight:500;color:var(--color-warning-text)">₹3.50L</span></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="card-h"><h3>Notes</h3><span class="cnt">1</span><button class="btn btn-ghost btn-sm more" style="padding:4px 8px"><i data-lucide="plus"></i>Add</button></div>
+              <div class="card-b"><div style="border-left:2px solid var(--color-accent-border);padding-left:12px"><div style="font-size:12.5px;color:var(--color-text-secondary);line-height:1.5">Notification copy needs Ravi's sign-off — he asked for a softer tone on the fallback alert.</div><div style="font-size:11px;color:var(--color-text-muted);margin-top:6px">Neha K. · 2026-06-01</div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"><i data-lucide="circle-check" class="ic-fill"></i><span id="toastMsg"></span></div>
+<script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+<script src="nav.js"></script>
+<script src="inline-edit.js"></script>
+<script>
+var STATUSES = [['Not started','var(--n-400)'],['In Progress','var(--iris-500)'],['In Review','var(--sky-500)'],['On Hold','var(--amber-500)'],['Done','var(--green-500)']];
+var tasks = [
+  ['Wire Slack channel mapping','done','Medium','Delivered','NK','var(--green-600)'],
+  ['Build fallback-owner rule','done','Medium','Delivered','NK','var(--green-600)'],
+  ['Slack message formatting + lead score','wip','High','Due 1d','DV','var(--amber-500)'],
+  ['Notification copy + tone pass','todo','Low','Due 3d','NK','var(--green-600)'],
+];
+var tests = [
+  ['dev','Payload includes lead score','pass'],['dev','Channel mapping by territory','pass'],['dev','Fallback owner on collision','fail'],
+  ['uat','Notification copy reads correctly','fail'],['uat','Routing matches the matrix','pass'],
+];
+function tStatus(k){ return k==='done'?LKplain('<span class="dot" style="background:var(--color-success-solid)"></span>Done'):k==='wip'?'<span class="status"><span class="dot" style="background:var(--iris-500)"></span>In Progress</span>':'<span class="status">To-do</span>'; }
+function LKplain(inner){ return '<span class="status">'+inner+'</span>'; }
+function prio(p){ var c=p==='High'?'var(--color-danger-text)':p==='Medium'?'var(--color-warning-text)':'var(--color-text-tertiary)'; return '<span style="font-size:11px;font-weight:600;color:'+c+'">'+p+'</span>'; }
+function sched(s){ var del=s==='Delivered',ov=s.indexOf('Overdue')>-1; var k=del?'info':ov?'danger':'warning'; return '<span class="schedule" style="background:var(--color-'+k+'-bg);color:var(--color-'+k+'-text);border:1px solid var(--color-'+k+'-border)">'+s+'</span>'; }
+document.getElementById('taskList').innerHTML = tasks.map(function(t){
+  return '<div class="row-item"><span class="check '+(t[1]==='done'?'done':'')+'"><i data-lucide="check"></i></span>'
+    + '<a href="Task Detail.html" style="flex:1;min-width:0;text-decoration:none;color:var(--color-text-primary);font-size:13.5px;font-weight:500;'+(t[1]==='done'?'color:var(--color-text-tertiary);text-decoration:line-through':'')+'">'+t[0]+'</a>'
+    + prio(t[2]) + tStatus(t[1]) + sched(t[3]) + '<span class="avatar" style="background:'+t[5]+';width:24px;height:24px;font-size:10px;box-shadow:none">'+t[4]+'</span></div>';
+}).join('');
+document.getElementById('testList').innerHTML = tests.map(function(t){
+  var pass=t[2]==='pass';
+  return '<div class="test-row"><i data-lucide="'+(pass?'circle-check':'circle-x')+'" class="'+(pass?'ic-fill':'')+'" style="font-size:17px;color:'+(pass?'var(--color-success-text)':'var(--color-danger-text)')+'"></i><span class="tag" style="text-transform:uppercase;font-size:9px;letter-spacing:.05em">'+(t[0]==='dev'?'DEV':'UAT')+'</span><span style="flex:1;color:var(--color-text-primary)">'+t[1]+'</span></div>';
+}).join('');
+if (window.lucide) lucide.createIcons();
+initInlineEdit();
+document.getElementById('navToggle').onclick=function(){ document.getElementById('app').classList.toggle('collapsed'); };
+document.getElementById('revealCreds')&&0;
+var pill=document.getElementById('statusPill'),openMenu=null;
+function closeMenu(){ if(openMenu){ openMenu.remove(); openMenu=null; } }
+pill.addEventListener('click',function(e){ e.stopPropagation(); if(openMenu){ closeMenu(); return; } var m=document.createElement('div'); m.className='menu'; m.innerHTML=STATUSES.map(function(s){ return '<button data-s="'+s[0]+'"><span class="dot" style="background:'+s[1]+'"></span>'+s[0]+'</button>'; }).join(''); document.body.appendChild(m); var r=pill.getBoundingClientRect(); m.style.top=(r.bottom+6)+'px'; m.style.left=r.left+'px'; openMenu=m; m.addEventListener('click',function(ev){ var b=ev.target.closest('button'); if(!b)return; var s=STATUSES.find(function(x){return x[0]===b.dataset.s;}); pill.querySelector('.dot').style.background=s[1]; document.getElementById('statusLabel').textContent=s[0]; closeMenu(); gsToast('Status saved · '+s[0]); }); });
+document.addEventListener('click',closeMenu);
+</script>
+</body>
+</html>
