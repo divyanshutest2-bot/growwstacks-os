@@ -42,7 +42,12 @@ export async function requestMagicLink(email: string): Promise<SignInResult> {
           'Could not send the magic link right now. Email sign-in may not be configured yet — please try again later or contact an admin.',
       };
     }
-    // next-auth throws a redirect "error" on success in some flows; rethrow it.
-    throw err;
+    return {
+      ok: false,
+      message:
+        err instanceof Error
+          ? err.message
+          : 'Could not send the magic link right now. Please try again later.',
+    };
   }
 }

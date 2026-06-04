@@ -16,9 +16,32 @@ import Resend from 'next-auth/providers/resend';
 import { sqlNoUser } from '@/lib/db';
 
 const PRODUCTION_AUTH_URL = 'https://growwstacks-os.divyanshutest2.workers.dev';
+const AUTH_EMAIL_FROM = 'login@growwstacks.com';
 
 process.env.AUTH_URL ??= PRODUCTION_AUTH_URL;
 process.env.NEXTAUTH_URL ??= PRODUCTION_AUTH_URL;
+
+function forceProductionOrigin(url: string): string {
+  const nextUrl = new URL(url);
+  const productionUrl = new URL(PRODUCTION_AUTH_URL);
+  nextUrl.protocol = productionUrl.protocol;
+  nextUrl.host = productionUrl.host;
+  return nextUrl.toString();
+}
+
+function magicLinkHtml(url: string, host: string): string {
+  return `
+    <body>
+      <p>Sign in to <strong>${host}</strong></p>
+      <p>
+        <a href="${url}" target="_blank" rel="noreferrer">
+          Click here to sign in
+        </a>
+      </p>
+      <p>If you did not request this email, you can ignore it.</p>
+    </body>
+  `;
+}
 
 // How often (ms) to re-validate that the user is still active. PROGRESS Auth
 // Decision: ≤60s app-layer bounce (Layer 2). Layer 1 (RLS) is immediate.
@@ -145,7 +168,29 @@ export const authConfig: NextAuthConfig = {
   providers: [
     Resend({
       apiKey: process.env.AUTH_RESEND_KEY,
-      from: 'login@growwstacks.com',
+      from: AUTH_EMAIL_FROM,
+      async sendVerificationRequest({ identifier: to, provider, url }) {
+        const productionUrl = forceProductionOrigin(url);
+        const { host } = new URL(productionUrl);
+        const res = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${provider.apiKey}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: provider.from,
+            to,
+            subject: `Sign in to ${host}`,
+            html: magicLinkHtml(productionUrl, host),
+            text: `Sign in to ${host}\n${productionUrl}`,
+          }),
+        });
+
+        if (!res.ok) {
+          throw new Error(`Resend error: ${await res.text()}`);
+        }
+      },
     }),
   ],
   callbacks: {
