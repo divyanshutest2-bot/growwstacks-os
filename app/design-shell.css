@@ -38,6 +38,8 @@ body { overflow: hidden; }
 .acct-meta { flex: 1; min-width: 0; }
 .acct-meta .n { font-size: 12px; color: var(--color-sidebar-text-active); font-weight: 600; }
 .acct-meta .r { font-size: 10px; color: var(--color-sidebar-text-muted); }
+.acct-logout { width: 26px; height: 26px; border-radius: var(--radius-sm); border: 0; background: transparent; color: var(--color-sidebar-text-muted); display: inline-flex; align-items: center; justify-content: center; cursor: pointer; transition: background var(--dur-fast) var(--ease-standard), color var(--dur-fast) var(--ease-standard); }
+.acct-logout:hover { background: var(--color-bg-sidebar-hover); color: var(--color-sidebar-text-active); }
 
 /* ---- Main + topbar ---- */
 .main { display: flex; flex-direction: column; overflow: hidden; background: var(--color-bg-app); }

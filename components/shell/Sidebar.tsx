@@ -1,4 +1,4 @@
-import { Layers, ChevronsUpDown } from 'lucide-react';
+import { Layers, LogOut } from 'lucide-react';
 
 import { SidebarNav } from '@/components/shell/SidebarNav';
 import { getCurrentUserRole } from '@/lib/auth';
@@ -53,11 +53,11 @@ export async function Sidebar() {
             <div className="n">{name}</div>
             <div className="r">{roleLabel}</div>
           </div>
-          <ChevronsUpDown
-            size={14}
-            aria-hidden
-            style={{ color: 'var(--color-sidebar-text-muted)' }}
-          />
+          <form action="/api/logout" method="post">
+            <button type="submit" className="acct-logout" aria-label="Log out" title="Log out">
+              <LogOut size={14} aria-hidden />
+            </button>
+          </form>
         </div>
       </div>
     </aside>

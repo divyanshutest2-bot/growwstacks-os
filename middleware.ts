@@ -8,7 +8,7 @@ import { auth } from '@/lib/auth';
 
 // '/api/dev-login' is the DEV-ONLY login shortcut (app/api/dev-login/route.ts),
 // hard-guarded to 404 in production — it must be reachable while unauthenticated.
-const PUBLIC_PREFIXES = ['/login', '/api/auth', '/api/dev-login'];
+const PUBLIC_PREFIXES = ['/login', '/api/auth', '/api/dev-login', '/api/logout'];
 
 export default auth((req) => {
   const { pathname } = req.nextUrl;
